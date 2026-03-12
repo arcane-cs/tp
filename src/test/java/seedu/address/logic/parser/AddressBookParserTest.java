@@ -13,7 +13,6 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
-import seedu.address.model.person.Alias;
 import seedu.address.logic.commands.AddAliasCommand;
 import seedu.address.logic.commands.AddCommand;
 import seedu.address.logic.commands.ClearCommand;
@@ -25,9 +24,10 @@ import seedu.address.logic.commands.FindCommand;
 import seedu.address.logic.commands.HelpCommand;
 import seedu.address.logic.commands.ListCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.model.person.Alias;
+import seedu.address.model.person.Name;
 import seedu.address.model.person.NameContainsKeywordsPredicate;
 import seedu.address.model.person.Person;
-import seedu.address.model.person.Name;
 import seedu.address.testutil.EditPersonDescriptorBuilder;
 import seedu.address.testutil.PersonBuilder;
 import seedu.address.testutil.PersonUtil;
@@ -105,7 +105,7 @@ public class AddressBookParserTest {
     @Test
     public void parseCommand_aliasAdd() throws Exception {
         AddAliasCommand command = (AddAliasCommand) parser.parseCommand(
-        "alias add n/Benjamin al/Benjumpin");
+                "alias add n/Benjamin al/Benjumpin");
         assertEquals(new AddAliasCommand(new Name("Benjamin"), new Alias("Benjumpin")), command);
     }
 }
