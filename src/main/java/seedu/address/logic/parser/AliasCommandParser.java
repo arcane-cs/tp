@@ -14,9 +14,10 @@ import seedu.address.logic.parser.exceptions.ParseException;
  */
 public class AliasCommandParser implements Parser<Command> {
 
-    public static final String MESSAGE_USAGE = "alias: Manages aliases.\n"
-            + "  alias add n/NAME al/ALIAS\n"
-            + "  alias delete n/NAME al/ALIAS";
+    public static final String MESSAGE_USAGE = """
+              alias: Manages aliases.
+              alias add n/NAME g/GAME al/ALIAS
+              alias delete n/NAME g/GAME al/ALIAS""";
 
     private static final Pattern ACTION_FORMAT = Pattern.compile("(?<action>\\S+)(?<arguments>.*)");
 
@@ -30,13 +31,10 @@ public class AliasCommandParser implements Parser<Command> {
         final String action = matcher.group("action");
         final String arguments = matcher.group("arguments");
 
-        switch (action) {
-        case "add":
-            return new AddAliasCommandParser().parse(arguments);
-        case "delete":
-            return new DeleteAliasCommandParser().parse(arguments);
-        default:
-            throw new ParseException(MESSAGE_UNKNOWN_COMMAND);
-        }
+        return switch (action) {
+        case "add" -> new AddAliasCommandParser().parse(arguments);
+        case "delete" -> new DeleteAliasCommandParser().parse(arguments);
+        default -> throw new ParseException(MESSAGE_UNKNOWN_COMMAND);
+        };
     }
 }
