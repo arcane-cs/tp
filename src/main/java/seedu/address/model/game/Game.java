@@ -3,6 +3,12 @@ package seedu.address.model.game;
 import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.AppUtil.checkArgument;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
+import seedu.address.model.person.Alias;
+
 /**
  * Represents a Game associated with a Contact in the address book.
  * Guarantees: immutable; name is valid as declared in {@link #isValidGameName(String)}
@@ -15,6 +21,7 @@ public class Game {
     public static final String VALIDATION_REGEX = "^.{1,200}$";
 
     public final String gameName;
+    private final Set<Alias> aliases = new HashSet<>();
 
     /**
      * Constructs a {@code Game}.
@@ -28,11 +35,24 @@ public class Game {
         this.gameName = trimmedName;
     }
 
+    public Game(String gameName, Set<Alias> aliases) {
+        requireNonNull(gameName);
+        requireNonNull(aliases);
+        String trimmedName = gameName.trim();
+        checkArgument(isValidGameName(trimmedName), MESSAGE_CONSTRAINTS);
+        this.gameName = trimmedName;
+        this.aliases.addAll(aliases);
+    }
+
     /**
      * Returns true if a given string is a valid game name.
      */
     public static boolean isValidGameName(String test) {
         return test.trim().matches(VALIDATION_REGEX);
+    }
+
+    public Set<Alias> getAliases() {
+        return Collections.unmodifiableSet(aliases);
     }
 
     @Override
