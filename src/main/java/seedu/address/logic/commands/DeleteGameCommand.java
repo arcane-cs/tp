@@ -71,8 +71,7 @@ public class DeleteGameCommand extends Command {
 
         // Create a copy of the person with the updated games
         Person editedPerson = new Person(
-                personToEdit.getName(), personToEdit.getPhone(), personToEdit.getEmail(),
-                personToEdit.getAddress(), personToEdit.getTags(), updatedGames);
+                personToEdit.getName(), personToEdit.getTags(), updatedGames);
 
         model.setPerson(personToEdit, editedPerson);
         model.updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
