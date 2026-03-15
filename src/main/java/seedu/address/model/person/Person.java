@@ -8,8 +8,8 @@ import java.util.Objects;
 import java.util.Set;
 
 import seedu.address.commons.util.ToStringBuilder;
-import seedu.address.model.tag.Tag;
 import seedu.address.model.game.Game;
+import seedu.address.model.tag.Tag;
 
 /**
  * Represents a Person in the address book.
@@ -71,7 +71,7 @@ public class Person {
     public Set<Game> getGames() {
         return Collections.unmodifiableSet(games);
     }
-    
+
     /**
      * Returns true if both persons have the same name.
      * This defines a weaker notion of equality between two persons.
