@@ -104,35 +104,49 @@ public class AddressBookParserTest {
 
     @Test
     public void parseCommand_unknownCommand_throwsParseException() {
-        assertThrows(ParseException.class, MESSAGE_UNKNOWN_COMMAND, () -> parser.parseCommand("unknownCommand"));
+        assertThrows(ParseException.class,
+                MESSAGE_UNKNOWN_COMMAND,
+                () -> parser.parseCommand("unknownCommand"));
     }
 
     @Test
     public void parseCommand_aliasAdd() throws Exception {
         AddAliasCommand command = (AddAliasCommand) parser.parseCommand(
                 "alias add n/Benjamin g/Valorant al/Benjumpin");
-        assertEquals(new AddAliasCommand(null, new Name("Benjamin"), new Game("Valorant"), new Alias("Benjumpin")), command);
+        assertEquals(new AddAliasCommand(
+                null,
+                new Name("Benjamin"), new Game("Valorant"), new Alias("Benjumpin")
+        ), command);
     }
 
     @Test
     public void parseCommand_aliasDelete() throws Exception {
         DeleteAliasCommand command = (DeleteAliasCommand) parser.parseCommand(
                 "alias delete n/Benjamin g/Valorant al/Benjumpin");
-        assertEquals(new DeleteAliasCommand(null, new Name("Benjamin"), new Game("Valorant"), new Alias("Benjumpin")), command);
+        assertEquals(new DeleteAliasCommand(null,
+                new Name("Benjamin"),
+                new Game("Valorant"), new Alias("Benjumpin")
+        ), command);
     }
 
     @Test
     public void parseCommand_gameAdd() throws Exception {
         AddGameCommand command = (AddGameCommand) parser.parseCommand(
                 "game add n/Benjamin g/Valorant");
-        assertEquals(new AddGameCommand(null, new Name("Benjamin"), new Game("Valorant")), command);
+        assertEquals(new AddGameCommand(null,
+                new Name("Benjamin"),
+                new Game("Valorant")
+        ), command);
     }
 
     @Test
     public void parseCommand_gameDelete() throws Exception {
         DeleteGameCommand command = (DeleteGameCommand) parser.parseCommand(
                 "game delete n/Benjamin g/Valorant");
-        assertEquals(new DeleteGameCommand(null, new Name("Benjamin"), new Game("Valorant")), command);
+        assertEquals(new DeleteGameCommand(null,
+                new Name("Benjamin"),
+                new Game("Valorant")
+        ), command);
     }
 
     @Test
