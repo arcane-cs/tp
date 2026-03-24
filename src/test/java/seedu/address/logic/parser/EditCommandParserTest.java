@@ -113,4 +113,13 @@ public class EditCommandParserTest {
 
         assertParseSuccess(parser, userInput, expectedCommand);
     }
+
+    @Test
+    public void parse_indexZero_returnsUserProfileEditCommand() {
+        String userInput = "0" + NAME_DESC_AMY;
+        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder().withName(VALID_NAME_AMY).build();
+        EditCommand expectedCommand = new EditCommand(descriptor, true);
+
+        assertParseSuccess(parser, userInput, expectedCommand);
+    }
 }
