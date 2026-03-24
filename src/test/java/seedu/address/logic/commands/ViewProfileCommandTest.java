@@ -51,8 +51,12 @@ public class ViewProfileCommandTest {
         Person personToView = typicalModel.getFilteredPersonList().get(0);
         ViewProfileCommand viewCommand = new ViewProfileCommand(INDEX_FIRST_PERSON, null);
 
-        String expectedMessage = String.format(ViewProfileCommand.MESSAGE_SUCCESS_CONTACT, personToView.getName().fullName);
-        CommandResult expectedCommandResult = new CommandResult(expectedMessage, false, false, personToView);
+        String expectedMessage = String.format(ViewProfileCommand.MESSAGE_SUCCESS_CONTACT,
+                personToView.getName().fullName);
+        CommandResult expectedCommandResult = new CommandResult(expectedMessage,
+                false,
+                false,
+                personToView);
         Model expectedModel = new ModelManager(typicalModel.getAddressBook(), new UserPrefs());
 
         assertCommandSuccess(viewCommand, typicalModel, expectedCommandResult, expectedModel);

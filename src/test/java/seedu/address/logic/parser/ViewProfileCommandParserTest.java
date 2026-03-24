@@ -22,7 +22,9 @@ public class ViewProfileCommandParserTest {
     @Test
     public void parse_validArgsByName_returnsViewCommand() {
         // Simulates: profile view n/Alice Pauline
-        assertParseSuccess(parser, " n/Alice Pauline", new ViewProfileCommand(null, new Name("Alice Pauline")));
+        assertParseSuccess(parser,
+                " n/Alice Pauline",
+                new ViewProfileCommand(null, new Name("Alice Pauline")));
     }
 
     @Test
