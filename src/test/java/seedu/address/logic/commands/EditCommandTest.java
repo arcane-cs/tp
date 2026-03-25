@@ -171,6 +171,15 @@ public class EditCommandTest {
 
         // different descriptor -> returns false
         assertFalse(standardCommand.equals(new EditCommand(INDEX_FIRST_PERSON, DESC_BOB)));
+
+        // both useUserProfile (null index) with same descriptor -> returns true
+        EditCommand profileCommand = new EditCommand(DESC_AMY, true);
+        EditCommand profileCommandCopy = new EditCommand(DESC_AMY, true);
+        assertTrue(profileCommand.equals(profileCommandCopy));
+
+        // same null index, same descriptor, different useUserProfile -> returns false
+        EditCommand noProfileCommand = new EditCommand(DESC_AMY, false);
+        assertFalse(profileCommand.equals(noProfileCommand));
     }
 
     @Test

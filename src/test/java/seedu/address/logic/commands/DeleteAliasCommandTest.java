@@ -225,5 +225,14 @@ public class DeleteAliasCommandTest {
         DeleteAliasCommand deleteDiffAlias =
                 new DeleteAliasCommand(INDEX_FIRST_PERSON, null, gameA, aliasB, false);
         org.junit.jupiter.api.Assertions.assertFalse(deleteAliasByIndex.equals(deleteDiffAlias));
+
+        // different useUserProfile -> returns false
+        DeleteAliasCommand deleteWithProfile =
+                new DeleteAliasCommand(INDEX_FIRST_PERSON, null, gameA, aliasA, true);
+        org.junit.jupiter.api.Assertions.assertFalse(deleteAliasByIndex.equals(deleteWithProfile));
+
+        // same values by name -> returns true
+        DeleteAliasCommand deleteAliasByNameCopy = new DeleteAliasCommand(null, nameA, gameA, aliasA, false);
+        org.junit.jupiter.api.Assertions.assertTrue(deleteAliasByName.equals(deleteAliasByNameCopy));
     }
 }

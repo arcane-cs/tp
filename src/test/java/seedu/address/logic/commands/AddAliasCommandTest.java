@@ -239,5 +239,13 @@ public class AddAliasCommandTest {
         // different alias -> returns false
         AddAliasCommand addDiffAlias = new AddAliasCommand(INDEX_FIRST_PERSON, null, gameA, aliasB, false);
         org.junit.jupiter.api.Assertions.assertFalse(addAliasByIndex.equals(addDiffAlias));
+
+        // different useUserProfile -> returns false
+        AddAliasCommand addWithProfile = new AddAliasCommand(INDEX_FIRST_PERSON, null, gameA, aliasA, true);
+        org.junit.jupiter.api.Assertions.assertFalse(addAliasByIndex.equals(addWithProfile));
+
+        // same values by name -> returns true
+        AddAliasCommand addAliasByNameCopy = new AddAliasCommand(null, nameA, gameA, aliasA, false);
+        org.junit.jupiter.api.Assertions.assertTrue(addAliasByName.equals(addAliasByNameCopy));
     }
 }
