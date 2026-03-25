@@ -8,6 +8,7 @@ import static seedu.address.logic.commands.CommandTestUtil.NAME_DESC_AMY;
 import static seedu.address.logic.commands.DeleteContactCommand.MESSAGE_PERSON_NOT_FOUND;
 import static seedu.address.testutil.Assert.assertThrows;
 import static seedu.address.testutil.TypicalPersons.AMY;
+import static seedu.address.testutil.TypicalPersons.BOB;
 
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
@@ -20,7 +21,9 @@ import org.junit.jupiter.api.io.TempDir;
 import seedu.address.logic.commands.AddContactCommand;
 import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.DeleteContactCommand;
+import seedu.address.logic.commands.EditCommand;
 import seedu.address.logic.commands.ListCommand;
+import seedu.address.logic.commands.UndoCommand;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.Model;
@@ -291,6 +294,77 @@ public class LogicManagerTest {
         assertThrows(CommandException.class,
                 String.format(LogicManager.FILE_OPS_PERMISSION_ERROR_FORMAT, DUMMY_AD_EXCEPTION.getMessage()), () ->
                 logic.execute("y"));
+    }
+
+    // ==================== Undo integration tests ====================
+
+    @Test
+    public void execute_undoWithEmptyHistory_throwsCommandException() {
+        assertCommandException(UndoCommand.COMMAND_WORD, UndoCommand.MESSAGE_NOTHING_TO_UNDO);
+    }
+
+    @Test
+    public void execute_undoAfterAdd_removesAddedContact() throws Exception {
+        Person person = new PersonBuilder(AMY).withTags().build();
+        logic.execute(AddContactCommand.COMMAND_WORD + NAME_DESC_AMY);
+        assertTrue(model.getFilteredPersonList().contains(person));
+
+        logic.execute(UndoCommand.COMMAND_WORD);
+
+        assertFalse(model.getFilteredPersonList().contains(person));
+    }
+
+    @Test
+    public void execute_undoAfterEdit_revertsEdit() throws Exception {
+        Person original = new PersonBuilder(AMY).withTags().build();
+        model.addPerson(original);
+        logic.execute("edit 1 n/" + BOB.getName());
+        assertFalse(model.getFilteredPersonList().contains(original));
+
+        logic.execute(UndoCommand.COMMAND_WORD);
+
+        assertTrue(model.getFilteredPersonList().contains(original));
+    }
+
+    @Test
+    public void execute_undoAfterConfirmedDelete_restoresContact() throws Exception {
+        Person person = new PersonBuilder(AMY).withTags().build();
+        model.addPerson(person);
+        logic.execute("contact delete n/" + person.getName());
+        logic.execute("y");
+        assertFalse(model.getFilteredPersonList().contains(person));
+
+        logic.execute(UndoCommand.COMMAND_WORD);
+
+        assertTrue(model.getFilteredPersonList().contains(person));
+    }
+
+    @Test
+    public void execute_undoAfterCancelledDelete_undoesPriorCommand() throws Exception {
+        Person amy = new PersonBuilder(AMY).withTags().build();
+        logic.execute(AddContactCommand.COMMAND_WORD + NAME_DESC_AMY);
+        logic.execute("contact delete n/" + amy.getName());
+        logic.execute("n");
+
+        // History only has the add; cancelled delete is never pushed
+        logic.execute(UndoCommand.COMMAND_WORD);
+
+        assertFalse(model.getFilteredPersonList().contains(amy));
+    }
+
+    @Test
+    public void execute_multipleUndos_revertsInOrder() throws Exception {
+        Person amy = new PersonBuilder(AMY).withTags().build();
+        Person bob = new PersonBuilder(BOB).withTags().build();
+        logic.execute(AddContactCommand.COMMAND_WORD + NAME_DESC_AMY);
+        logic.execute(AddContactCommand.COMMAND_WORD + " n/" + BOB.getName());
+
+        logic.execute(UndoCommand.COMMAND_WORD);
+        assertFalse(model.getFilteredPersonList().contains(bob));
+        assertTrue(model.getFilteredPersonList().contains(amy));
+
+        logic.execute(UndoCommand.COMMAND_WORD);
+        assertFalse(model.getFilteredPersonList().contains(amy));
     }
 
     /**
