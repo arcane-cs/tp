@@ -6,8 +6,8 @@ import java.util.Optional;
 
 import seedu.address.model.AddressBook;
 import seedu.address.model.Model;
-import seedu.address.model.person.Person;
 import seedu.address.model.ReadOnlyAddressBook;
+import seedu.address.model.person.Person;
 
 /**
  * Clears the address book.
@@ -16,8 +16,8 @@ public class ClearCommand extends Command implements UndoableCommand {
 
     private ReadOnlyAddressBook previousAddressBook;
 
-    public static final String COMMAND_WORD = "clear";
     public static final String MESSAGE_SUCCESS = "Address book has been cleared!";
+    public static final String COMMAND_WORD = "clear";
 
 
     @Override
