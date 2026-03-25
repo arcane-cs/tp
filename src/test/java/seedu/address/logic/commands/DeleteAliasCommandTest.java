@@ -38,7 +38,7 @@ public class DeleteAliasCommandTest {
 
         DeleteAliasCommand deleteAliasCommand =
                 new DeleteAliasCommand(null, firstPerson.getName(), game, alias, false);
-        
+
         // Expected model has the game but without the alias (same as after only adding the game)
         Model expectedModel = new ModelManager(getTypicalAddressBook(), new UserPrefs());
         new AddGameCommand(null, firstPerson.getName(), game, false).execute(expectedModel);

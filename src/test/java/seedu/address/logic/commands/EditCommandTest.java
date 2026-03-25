@@ -70,7 +70,7 @@ public class EditCommandTest {
 
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
         expectedModel.setPerson(lastPerson, editedPerson);
-        
+
         CommandResult expectedCommandResult = new CommandResult(expectedMessage, false, false, editedPerson);
 
         assertCommandSuccess(editCommand, model, expectedCommandResult, expectedModel);
