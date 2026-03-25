@@ -1,6 +1,8 @@
 package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_ALIAS;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_GAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 
@@ -20,11 +22,16 @@ public class AddContactCommand extends Command {
     public static final String MESSAGE_USAGE = COMMAND_WORD + ": Adds a person to the address book. "
             + "Parameters: "
             + PREFIX_NAME + "NAME "
-            + "[" + PREFIX_TAG + "TAG]...\n"
+            + "[" + PREFIX_TAG + "TAG]... "
+            + "[" + PREFIX_GAME + "GAME] "
+            + "[" + PREFIX_ALIAS + "ALIAS]...\n"
             + "Example: " + COMMAND_WORD + " "
             + PREFIX_NAME + "John Doe "
             + PREFIX_TAG + "friends "
-            + PREFIX_TAG + "owesMoney";
+            + PREFIX_GAME + "Valorant "
+            + PREFIX_ALIAS + "JohnValo "
+            + PREFIX_ALIAS + "JDog"
+            + PREFIX_GAME + "Minecraft ";
 
     public static final String MESSAGE_SUCCESS = "Contact added: %1$s";
     public static final String MESSAGE_DUPLICATE_PERSON = "Error: Contact already exists in the address book";
@@ -58,11 +65,10 @@ public class AddContactCommand extends Command {
         }
 
         // instanceof handles nulls
-        if (!(other instanceof AddContactCommand)) {
+        if (!(other instanceof AddContactCommand otherAddCommand)) {
             return false;
         }
 
-        AddContactCommand otherAddCommand = (AddContactCommand) other;
         return toAdd.equals(otherAddCommand.toAdd);
     }
 
