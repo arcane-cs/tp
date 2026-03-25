@@ -114,11 +114,10 @@ public class CommandResultTest {
         String expected = CommandResult.class.getCanonicalName() + "{feedbackToUser="
                 + commandResult.getFeedbackToUser() + ", showHelp=" + commandResult.isShowHelp()
                 + ", exit=" + commandResult.isExit() + ", awaitingConfirmation="
-                + commandResult.isAwaitingConfirmation() + ", pendingPerson="
-                + commandResult.getPendingPerson() + ", personToView="
-                + commandResult.getViewedPerson() + "}"
                 + commandResult.isAwaitingConfirmation() + ", themeToSwitch="
-                + commandResult.getThemeToSwitch() + "}";
+                + commandResult.getThemeToSwitch() + ", pendingPerson="
+                + commandResult.getPendingPerson() + ", personToView="
+                + commandResult.getViewedPerson() + "}";
         assertEquals(expected, commandResult.toString());
     }
 }
