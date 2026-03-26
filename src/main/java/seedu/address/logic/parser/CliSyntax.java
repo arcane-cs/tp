@@ -10,4 +10,5 @@ public class CliSyntax {
     public static final Prefix PREFIX_TAG = new Prefix("t/");
     public static final Prefix PREFIX_GAME = new Prefix("g/");
     public static final Prefix PREFIX_ALIAS = new Prefix("al/");
+    public static final Prefix PREFIX_NEW_ALIAS = new Prefix("na/");
 }
