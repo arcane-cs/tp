@@ -104,7 +104,10 @@ public class DeleteGameCommand extends Command implements UndoableCommand {
 
         return new CommandResult(String.format(MESSAGE_SUCCESS,
                 gameToDelete.gameName,
-                editedPerson.getName().fullName));
+                editedPerson.getName().fullName),
+                false,
+                false,
+                editedPerson);
     }
 
     @Override

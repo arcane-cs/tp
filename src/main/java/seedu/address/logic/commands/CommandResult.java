@@ -34,15 +34,45 @@ public class CommandResult {
      */
     private final Person pendingPerson;
 
+    /** The theme to switch to, or null if not applicable. */
+    private final String themeToSwitch;
+
+    /**
+     * The profile/contact to be viewed in the UI, or null if not applicable.
+     * */
+    private final Person personToView;
+
     /**
      * Constructs a {@code CommandResult} with the specified fields.
      */
-    public CommandResult(String feedbackToUser, boolean showHelp, boolean exit) {
+    public CommandResult(String feedbackToUser, boolean showHelp, boolean exit, Person personToView) {
         this.feedbackToUser = requireNonNull(feedbackToUser);
         this.isShowHelp = showHelp;
         this.isExit = exit;
         this.isAwaitingConfirmation = false;
         this.pendingPerson = null;
+        this.themeToSwitch = null;
+        this.personToView = personToView;
+    }
+
+    /**
+     * Constructs a {@code CommandResult} for commands that require help or exit.
+     */
+    public CommandResult(String feedbackToUser, boolean showHelp, boolean exit) {
+        this(feedbackToUser, showHelp, exit, null);
+    }
+
+    /**
+     * Constructs a {@code CommandResult} for commands that require a theme switch.
+     */
+    public CommandResult(String feedbackToUser, String themeToSwitch) {
+        this.feedbackToUser = requireNonNull(feedbackToUser);
+        this.isShowHelp = false;
+        this.isExit = false;
+        this.isAwaitingConfirmation = false;
+        this.pendingPerson = null;
+        this.themeToSwitch = themeToSwitch;
+        this.personToView = null;
     }
 
     /**
@@ -50,7 +80,7 @@ public class CommandResult {
      * and other fields set to their default value.
      */
     public CommandResult(String feedbackToUser) {
-        this(feedbackToUser, false, false);
+        this(feedbackToUser, false, false, null);
     }
 
     /**
@@ -62,6 +92,8 @@ public class CommandResult {
         this.isExit = false;
         this.isAwaitingConfirmation = true;
         this.pendingPerson = requireNonNull(pendingPerson);
+        this.themeToSwitch = null;
+        this.personToView = null;
     }
 
     public String getFeedbackToUser() {
@@ -84,6 +116,14 @@ public class CommandResult {
         return pendingPerson;
     }
 
+    public String getThemeToSwitch() {
+        return themeToSwitch;
+    }
+
+    public Person getViewedPerson() {
+        return personToView;
+    }
+
     @Override
     public boolean equals(Object other) {
         if (other == this) {
@@ -99,12 +139,16 @@ public class CommandResult {
         return feedbackToUser.equals(otherCommandResult.feedbackToUser)
                 && isShowHelp == otherCommandResult.isShowHelp
                 && isExit == otherCommandResult.isExit
-                && isAwaitingConfirmation == otherCommandResult.isAwaitingConfirmation;
+                && isAwaitingConfirmation == otherCommandResult.isAwaitingConfirmation
+                && Objects.equals(themeToSwitch, otherCommandResult.themeToSwitch)
+                && Objects.equals(pendingPerson, otherCommandResult.pendingPerson)
+                && Objects.equals(personToView, otherCommandResult.personToView);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(feedbackToUser, isShowHelp, isExit, isAwaitingConfirmation);
+        return Objects.hash(feedbackToUser, isShowHelp, isExit, isAwaitingConfirmation,
+                themeToSwitch, pendingPerson, personToView);
     }
 
     @Override
@@ -114,6 +158,9 @@ public class CommandResult {
                 .add("showHelp", isShowHelp)
                 .add("exit", isExit)
                 .add("awaitingConfirmation", isAwaitingConfirmation)
+                .add("themeToSwitch", themeToSwitch)
+                .add("pendingPerson", pendingPerson)
+                .add("personToView", personToView)
                 .toString();
     }
 

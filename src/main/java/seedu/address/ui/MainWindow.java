@@ -4,6 +4,7 @@ import java.util.logging.Logger;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.input.KeyCombination;
@@ -34,6 +35,7 @@ public class MainWindow extends UiPart<Stage> {
     private PersonListPanel personListPanel;
     private ResultDisplay resultDisplay;
     private HelpWindow helpWindow;
+    private ViewPanel viewPanel;
 
     @FXML
     private StackPane commandBoxPlaceholder;
@@ -49,6 +51,9 @@ public class MainWindow extends UiPart<Stage> {
 
     @FXML
     private StackPane statusbarPlaceholder;
+
+    @FXML
+    private StackPane viewPanelPlaceholder;
 
     /**
      * Creates a {@code MainWindow} with the given {@code Stage} and {@code Logic}.
@@ -122,6 +127,9 @@ public class MainWindow extends UiPart<Stage> {
 
         CommandBox commandBox = new CommandBox(this::executeCommand);
         commandBoxPlaceholder.getChildren().add(commandBox.getRoot());
+
+        viewPanel = new ViewPanel();
+        viewPanelPlaceholder.getChildren().add(viewPanel.getRoot());
     }
 
     /**
@@ -179,6 +187,10 @@ public class MainWindow extends UiPart<Stage> {
             logger.info("Result: " + commandResult.getFeedbackToUser());
             resultDisplay.setFeedbackToUser(commandResult.getFeedbackToUser());
 
+            if (commandResult.getViewedPerson() != null) {
+                viewPanel.setPerson(commandResult.getViewedPerson());
+            }
+
             if (commandResult.isShowHelp()) {
                 handleHelp();
             }
@@ -187,11 +199,40 @@ public class MainWindow extends UiPart<Stage> {
                 handleExit();
             }
 
+            if (commandResult.getThemeToSwitch() != null) {
+                handleThemeSwitch(commandResult.getThemeToSwitch());
+            }
+
             return commandResult;
         } catch (CommandException | ParseException e) {
             logger.info("An error occurred while executing command: " + commandText);
             resultDisplay.setFeedbackToUser(e.getMessage());
             throw e;
+        }
+    }
+
+    /**
+     * Switches the application's CSS theme.
+     */
+    @FXML
+    private void handleThemeSwitch(String theme) {
+        // Grab the active window scene
+        Scene scene = getRoot().getScene();
+
+        // Paths to CSS files
+        String darkTheme = getClass().getResource("/view/DarkTheme.css").toExternalForm();
+        String lightTheme = getClass().getResource("/view/LightTheme.css").toExternalForm();
+        String rainbowTheme = getClass().getResource("/view/RainbowTheme.css").toExternalForm();
+
+        String extensions = getClass().getResource("/view/Extensions.css").toExternalForm();
+
+        // Swaping stylesheets dynamically
+        if (theme.equals("light")) {
+            scene.getStylesheets().setAll(lightTheme, extensions);
+        } else if (theme.equals("dark")) {
+            scene.getStylesheets().setAll(darkTheme, extensions);
+        } else {
+            scene.getStylesheets().setAll(rainbowTheme, extensions);
         }
     }
 }

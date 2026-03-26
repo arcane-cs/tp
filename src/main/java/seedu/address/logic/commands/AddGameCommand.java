@@ -103,7 +103,10 @@ public class AddGameCommand extends Command implements UndoableCommand {
         model.setPerson(personToEdit, editedPerson);
         model.updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
 
-        return new CommandResult(String.format(MESSAGE_SUCCESS, gameToAdd.gameName, editedPerson.getName().fullName));
+        return new CommandResult(String.format(MESSAGE_SUCCESS, gameToAdd.gameName, editedPerson.getName().fullName),
+                false,
+                false,
+                editedPerson);
     }
 
     @Override

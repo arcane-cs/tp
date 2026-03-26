@@ -126,7 +126,10 @@ public class DeleteAliasCommand extends Command implements UndoableCommand {
                 MESSAGE_SUCCESS,
                 editedPerson.getName(),
                 updatedGame.gameName,
-                aliasToDelete));
+                aliasToDelete),
+                false,
+                false,
+                editedPerson);
     }
 
     @Override

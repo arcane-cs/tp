@@ -38,11 +38,16 @@ public class DeleteGameCommandTest {
 
         // The expected model is exactly the original clean model (since adding and deleting leaves it unchanged)
         Model expectedModel = new ModelManager(getTypicalAddressBook(), new UserPrefs());
+
+        Person editedPerson = expectedModel.getFilteredPersonList().get(0);
+
         String expectedMessage = String.format(DeleteGameCommand.MESSAGE_SUCCESS,
                 gameToProcess.gameName,
                 firstPerson.getName().fullName);
 
-        assertCommandSuccess(deleteGameCommand, model, expectedMessage, expectedModel);
+        CommandResult expectedCommandResult = new CommandResult(expectedMessage, false, false, editedPerson);
+
+        assertCommandSuccess(deleteGameCommand, model, expectedCommandResult, expectedModel);
     }
 
     @Test
@@ -75,11 +80,16 @@ public class DeleteGameCommandTest {
                 new DeleteGameCommand(INDEX_FIRST_PERSON, null, gameToProcess, false);
 
         Model expectedModel = new ModelManager(getTypicalAddressBook(), new UserPrefs());
+
+        Person editedPerson = expectedModel.getFilteredPersonList().get(0);
+
         String expectedMessage = String.format(DeleteGameCommand.MESSAGE_SUCCESS,
                 gameToProcess.gameName,
                 firstPerson.getName().fullName);
 
-        assertCommandSuccess(deleteGameCommand, model, expectedMessage, expectedModel);
+        CommandResult expectedCommandResult = new CommandResult(expectedMessage, false, false, editedPerson);
+
+        assertCommandSuccess(deleteGameCommand, model, expectedCommandResult, expectedModel);
     }
 
     @Test
@@ -112,6 +122,7 @@ public class DeleteGameCommandTest {
         assertEquals(expectedMessage, result.getFeedbackToUser());
         assertTrue(profileModel.getUserProfile().isPresent());
         assertTrue(profileModel.getUserProfile().get().getGames().isEmpty());
+        assertEquals(profileModel.getUserProfile().get(), result.getViewedPerson());
     }
 
     @Test
@@ -136,11 +147,16 @@ public class DeleteGameCommandTest {
         DeleteGameCommand deleteGameCommand = new DeleteGameCommand(null, lowerCaseName, gameToProcess, false);
 
         Model expectedModel = new ModelManager(getTypicalAddressBook(), new UserPrefs());
+
+        Person editedPerson = expectedModel.getFilteredPersonList().get(0);
+
         String expectedMessage = String.format(DeleteGameCommand.MESSAGE_SUCCESS,
                 gameToProcess.gameName,
                 firstPerson.getName().fullName);
 
-        assertCommandSuccess(deleteGameCommand, model, expectedMessage, expectedModel);
+        CommandResult expectedCommandResult = new CommandResult(expectedMessage, false, false, editedPerson);
+
+        assertCommandSuccess(deleteGameCommand, model, expectedCommandResult, expectedModel);
     }
 
     @Test
