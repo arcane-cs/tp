@@ -228,10 +228,14 @@ public class EditAliasCommandTest {
         // same object -> returns true
         org.junit.jupiter.api.Assertions.assertTrue(editByIndex.equals(editByIndex));
 
-        // same values -> returns true
+        // same values (by index) -> returns true
         EditAliasCommand editByIndexCopy =
                 new EditAliasCommand(INDEX_FIRST_PERSON, null, gameA, aliasA, aliasB, false);
         org.junit.jupiter.api.Assertions.assertTrue(editByIndex.equals(editByIndexCopy));
+
+        // same values (by name) -> returns true
+        EditAliasCommand editByNameCopy = new EditAliasCommand(null, nameA, gameA, aliasA, aliasB, false);
+        org.junit.jupiter.api.Assertions.assertTrue(editByName.equals(editByNameCopy));
 
         // different types -> returns false
         org.junit.jupiter.api.Assertions.assertFalse(editByIndex.equals(1));
