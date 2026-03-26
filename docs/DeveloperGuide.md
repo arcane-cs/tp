@@ -158,6 +158,31 @@ Classes used by multiple components are in the `seedu.address.commons` package.
 
 This section describes some noteworthy details on how certain features are implemented.
 
+### Editing a contact's name feature
+
+#### Implementation
+
+The `contact edit` command allows users to rename an existing contact while preserving all associated games and aliases. It is implemented via `EditContactCommand`, parsed by `EditContactCommandParser`, and routed through `ContactCommandParser`.
+
+**Parsing flow:**
+1. `AddressBookParser` receives `"contact edit n/Janelle e/Jan"` and dispatches to `ContactCommandParser`.
+2. `ContactCommandParser` splits on the first token (`"edit"`) and delegates the remaining args to `EditContactCommandParser`.
+3. `EditContactCommandParser` tokenizes using `PREFIX_NAME` (`n/`) and `PREFIX_NEW_NAME` (`e/`), validates both are present, and returns an `EditContactCommand(targetName, newName)`.
+
+**Execution flow:**
+1. `EditContactCommand#execute()` searches `model.getFilteredPersonList()` for a `Person` whose `getName()` equals `targetName`.
+2. If not found, a `CommandException` with `MESSAGE_PERSON_NOT_FOUND` is thrown.
+3. A new `Person` is created with `newName` and the original person's `tags`, `games`, and `isUserProfile` flag.
+4. If the new name already belongs to a different person, a `CommandException` with `MESSAGE_DUPLICATE_PERSON` is thrown.
+5. `model.setPerson()` replaces the old entry, and the filtered list is reset to show all persons.
+6. A `CommandResult` is returned, displaying the updated contact.
+
+**Design considerations:**
+
+* **Immutable `Person` model** — `Person` objects are immutable; editing creates a new `Person` rather than mutating the existing one. This keeps the model simple and consistent with the rest of the codebase.
+* **Name-based lookup** — The command identifies contacts by name rather than index, matching the approach used by `game add/delete` and `alias add/delete` for consistency.
+* **Games and aliases preserved** — The new `Person` is constructed with the original person's `games` map, so all associated data is retained after a rename.
+
 ### \[Proposed\] Undo/redo feature
 
 #### Proposed Implementation
@@ -520,6 +545,24 @@ testers are expected to do more *exploratory* testing.
       Expected: Similar to previous.
 
 1. _{ more test cases …​ }_
+
+### Editing a contact's name
+
+1. Renaming a contact while all persons are shown
+
+   1. Prerequisites: List all persons using the `list` command. At least one contact in the list (e.g. `Alex Yeoh`).
+
+   1. Test case: `contact edit n/Alex Yeoh e/Alex`<br>
+      Expected: Contact is renamed. Success message `Contact updated: Alex Yeoh → Alex` shown.
+
+   1. Test case: `contact edit n/NonExistent e/NewName`<br>
+      Expected: No contact is renamed. Error message `Error: Name not found` shown.
+
+   1. Test case: `contact edit n/Alex Yeoh e/Bernice Yu` (where `Bernice Yu` already exists)<br>
+      Expected: No contact is renamed. Error message `Error: A contact with that name already exists` shown.
+
+   1. Test case: `contact edit n/Alex Yeoh` (missing `e/` prefix)<br>
+      Expected: No contact is renamed. Invalid command format error shown.
 
 ### Saving data
 
