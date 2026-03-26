@@ -56,6 +56,16 @@ public class EditContactCommandTest {
     }
 
     @Test
+    public void execute_sameNameEdit_success() throws Exception {
+        Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
+        EditContactCommand command = new EditContactCommand(
+                ALICE.getName(), ALICE.getName());
+        // isSamePerson returns true → duplicate check skipped → succeeds
+        command.execute(model);
+    }
+
+
+    @Test
     public void equals() {
         Name alice = new Name("Alice");
         Name bob = new Name("Bob");

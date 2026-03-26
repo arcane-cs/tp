@@ -48,4 +48,11 @@ public class EditContactCommandParserTest {
     public void parse_invalidNewName_failure() {
         assertParseFailure(parser, " n/" + VALID_NAME_AMY + " e/James&", Name.MESSAGE_CONSTRAINTS);
     }
+
+    @Test
+    public void parse_nonEmptyPreamble_failure() {
+        assertParseFailure(parser, "sometext n/" + VALID_NAME_AMY + " e/" + VALID_NAME_BOB,
+                MESSAGE_INVALID_FORMAT);
+    }
+
 }
