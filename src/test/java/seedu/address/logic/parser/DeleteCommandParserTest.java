@@ -41,6 +41,12 @@ public class DeleteCommandParserTest {
     }
 
     @Test
+    public void parse_userProfileAndName_throwsParseException() {
+        assertParseFailure(parser, " 0 n/Alice",
+                "Please provide either an index OR a name, not both.");
+    }
+
+    @Test
     public void parse_emptyArgs_throwsParseException() {
         assertParseFailure(parser, "",
                 String.format(MESSAGE_INVALID_COMMAND_FORMAT, DeleteContactCommand.MESSAGE_USAGE));

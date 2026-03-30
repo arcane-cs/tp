@@ -132,6 +132,12 @@ public class DeleteContactCommandTest {
     }
 
     @Test
+    public void execute_nullIndexAndName_throwsCommandException() {
+        DeleteContactCommand deleteCommand = new DeleteContactCommand(null, null, false);
+        assertCommandFailure(deleteCommand, model, DeleteContactCommand.MESSAGE_PERSON_NOT_FOUND);
+    }
+
+    @Test
     public void equals() {
         DeleteContactCommand deleteAliceByName =
                 new DeleteContactCommand(null, ALICE.getName(), false);
