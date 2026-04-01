@@ -381,7 +381,7 @@ Furthermore, certain edits can cause Harmony to behave in unexpected ways (e.g.,
 | **Undo**            | `undo` |
 | **Contact Add**     | `contact add n/NAME [t/TAG]…​ [g/GAME [al/ALIAS]…​]…​` <br> e.g., `contact add n/James Ho t/friend t/colleague` |
 | **Contact Delete**  | `contact delete INDEX` or `contact delete n/NAME`<br> e.g., `contact delete 1` or `contact delete n/James Ho` |
-| **Contact Edit**    | `contact edit n/NAME e/NEW_NAME`<br> e.g., `contact edit n/James Ho e/James Lee` |
+| **Contact Edit**    | `contact edit INDEX e/NEW_NAME` or `contact edit n/NAME e/NEW_NAME`<br> e.g., `contact edit 1 e/James Lee` or `contact edit n/James Ho e/James Lee` |
 | **Clear**           | `clear` |
 | **Alias Add**       | `alias add INDEX g/GAME_NAME al/ALIAS` or `alias add n/CONTACT_NAME g/GAME_NAME al/ALIAS`<br> e.g., `alias add 1 g/Valorant al/Benjumpin` |
 | **Alias Delete**    | `alias delete INDEX g/GAME_NAME al/ALIAS` or `alias delete n/CONTACT_NAME g/GAME_NAME al/ALIAS`<br> e.g., `alias delete 1 g/Valorant al/Benjumpin` |
