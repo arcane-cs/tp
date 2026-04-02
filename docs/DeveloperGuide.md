@@ -222,6 +222,8 @@ Rather than saving a full snapshot of the address book after each command, each 
 | `DeleteGameCommand` | `personBeforeEdit`, `personAfterEdit` | `model.setPerson(personAfterEdit, personBeforeEdit)` |
 | `AddAliasCommand` | `personBeforeEdit`, `personAfterEdit` | `model.setPerson(personAfterEdit, personBeforeEdit)` |
 | `DeleteAliasCommand` | `personBeforeEdit`, `personAfterEdit` | `model.setPerson(personAfterEdit, personBeforeEdit)` |
+| `EditContactCommand` | `personBeforeEdit`, `personAfterEdit` | `model.setPerson(personAfterEdit, personBeforeEdit)` |
+| `EditAliasCommand` | `personBeforeEdit`, `personAfterEdit` | `model.setPerson(personAfterEdit, personBeforeEdit)` |
 
 **Special case — delete confirmation:**
 
