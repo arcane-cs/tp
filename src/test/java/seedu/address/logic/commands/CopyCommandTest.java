@@ -74,9 +74,8 @@ public class CopyCommandTest {
 
     @Test
     public void execute_generatesCorrectComplexString() throws Exception {
-        // Create a person with tags, games, and aliases to test the string builder
+        // Create a person with games and aliases to test the string builder
         Person complexPerson = new PersonBuilder().withName("Gamer John")
-                .withTags("friend")
                 .withGameAndAliases("Valorant", "JDog", "ValoKing")
                 .withGameAndAliases("Minecraft", "MinerSteve")
                 .build();
@@ -90,7 +89,6 @@ public class CopyCommandTest {
 
         // Verify all parts were constructed correctly
         assertTrue(copiedText.contains("contact add n/Gamer John"));
-        assertTrue(copiedText.contains("t/friend"));
         assertTrue(copiedText.contains("g/Valorant"));
         assertTrue(copiedText.contains("al/JDog"));
         assertTrue(copiedText.contains("al/ValoKing"));

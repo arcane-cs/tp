@@ -129,7 +129,6 @@ public class EditAliasCommand extends Command {
 
         Person editedPerson = new Person(
                 personToEdit.getName(),
-                personToEdit.getTags(),
                 updatedGames,
                 personToEdit.isUserProfile()
         );
