@@ -1,0 +1,73 @@
+@startuml
+!include style.puml
+skinparam arrowThickness 1.1
+skinparam arrowColor LOGIC_COLOR_T4
+skinparam classBackgroundColor LOGIC_COLOR
+
+package Logic {
+
+Class "{abstract}\nCommand" as Command
+Class "<<interface>>\nUndoableCommand" as UndoableCommand
+
+Class LogicManager {
+    - pendingDeletePerson : Person
+    - pendingDeleteCommand : DeleteContactCommand
+    - commandHistory : Deque<UndoableCommand>
+    + execute(commandText) : CommandResult
+    - handleDeleteConfirmation(input) : CommandResult
+}
+
+Class DeleteContactCommand {
+    + execute(model) : CommandResult
+    + setDeletedPerson(person)
+    + undo(model)
+}
+
+Class DeleteGameCommand {
+    + execute(model) : CommandResult
+    + undo(model)
+}
+
+Class DeleteAliasCommand {
+    + execute(model) : CommandResult
+    + undo(model)
+}
+
+Class CommandResult {
+    - feedbackToUser : String
+    - isAwaitingConfirmation : boolean
+    - pendingPerson : Person
+}
+
+}
+
+package Model {
+Class HiddenModel #FFFFFF
+}
+
+DeleteContactCommand -up-|> Command
+DeleteGameCommand -up-|> Command
+DeleteAliasCommand -up-|> Command
+
+DeleteContactCommand .up.|> UndoableCommand
+DeleteGameCommand .up.|> UndoableCommand
+DeleteAliasCommand .up.|> UndoableCommand
+
+Command .right.> CommandResult : <<create>>
+
+LogicManager --> DeleteContactCommand : stores pending
+LogicManager .right.> Command : <<call>>
+LogicManager --> HiddenModel
+
+note bottom of DeleteContactCommand
+  execute() returns confirmation prompt.
+  Actual deletion happens in
+  LogicManager.handleDeleteConfirmation()
+  after user types "y".
+end note
+
+note bottom of DeleteGameCommand
+  execute() deletes immediately\n(no confirmation)
+end note
+
+@enduml
