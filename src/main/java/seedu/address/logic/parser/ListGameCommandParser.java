@@ -18,13 +18,14 @@ public class ListGameCommandParser implements Parser<ListGameCommand> {
                 ArgumentTokenizer.tokenize(args, PREFIX_NAME);
 
         String preamble = argMultimap.getPreamble().trim();
-        boolean useUserProfile = preamble.equals("0");
+        boolean useUserProfile = preamble.equalsIgnoreCase("me"); // Now checks for 'me'
         boolean hasNamePrefix = argMultimap.getValue(PREFIX_NAME).isPresent();
 
         if (!useUserProfile) {
             ParserUtil.verifyIndexOrNamePresent(preamble, hasNamePrefix, ListGameCommand.MESSAGE_USAGE);
         } else if (hasNamePrefix) {
-            throw new ParseException("Please provide either an index OR a name, not both.");
+            throw new ParseException("Please do not provide a name prefix (n/) "
+                    + "when targeting your own profile with 'me'.");
         }
 
         Index index = (!useUserProfile && !preamble.isEmpty()) ? ParserUtil.parseIndex(preamble) : null;
