@@ -114,7 +114,8 @@ public class CommandResultTest {
         String expected = CommandResult.class.getCanonicalName() + "{feedbackToUser="
                 + commandResult.getFeedbackToUser() + ", showHelp=" + commandResult.isShowHelp()
                 + ", exit=" + commandResult.isExit() + ", awaitingConfirmation="
-                + commandResult.isAwaitingConfirmation() + ", themeToSwitch="
+                + commandResult.isAwaitingConfirmation() + ", awaitingClearConfirmation="
+                + commandResult.isAwaitingClearConfirmation() + ", themeToSwitch="
                 + commandResult.getThemeToSwitch() + ", pendingPerson="
                 + commandResult.getPendingPerson() + ", personToView="
                 + commandResult.getViewedPerson() + "}";
