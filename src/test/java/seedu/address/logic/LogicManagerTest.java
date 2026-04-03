@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import seedu.address.logic.commands.AddContactCommand;
+import seedu.address.logic.commands.ClearCommand;
 import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.DeleteContactCommand;
 import seedu.address.logic.commands.ListCommand;
@@ -182,6 +183,60 @@ public class LogicManagerTest {
         model.addPerson(person);
         logic.execute("contact delete n/" + person.getName());
         logic.execute("n");
+
+        CommandResult result = logic.execute(ListCommand.COMMAND_WORD);
+        assertEquals(ListCommand.MESSAGE_SUCCESS, result.getFeedbackToUser());
+    }
+
+    // ==================== Clear confirmation flow tests ====================
+
+    @Test
+    public void execute_clearCommand_returnsAwaitingClearConfirmation() throws Exception {
+        CommandResult result = logic.execute(ClearCommand.COMMAND_WORD);
+        assertTrue(result.isAwaitingClearConfirmation());
+        assertEquals(ClearCommand.MESSAGE_CONFIRMATION, result.getFeedbackToUser());
+    }
+
+    @Test
+    public void execute_clearConfirmYes_clearsAddressBook() throws Exception {
+        Person person = new PersonBuilder(AMY).build();
+        model.addPerson(person);
+        logic.execute(ClearCommand.COMMAND_WORD);
+
+        CommandResult result = logic.execute("y");
+
+        assertEquals(ClearCommand.MESSAGE_SUCCESS, result.getFeedbackToUser());
+        assertFalse(model.getFilteredPersonList().contains(person));
+    }
+
+    @Test
+    public void execute_clearConfirmNo_cancelsClear() throws Exception {
+        Person person = new PersonBuilder(AMY).build();
+        model.addPerson(person);
+        logic.execute(ClearCommand.COMMAND_WORD);
+
+        CommandResult result = logic.execute("n");
+
+        assertEquals(ClearCommand.MESSAGE_CANCELLED, result.getFeedbackToUser());
+        assertTrue(model.getFilteredPersonList().contains(person));
+    }
+
+    @Test
+    public void execute_clearConfirmInvalidInput_cancelsClear() throws Exception {
+        Person person = new PersonBuilder(AMY).build();
+        model.addPerson(person);
+        logic.execute(ClearCommand.COMMAND_WORD);
+
+        CommandResult result = logic.execute("maybe");
+
+        assertEquals("Invalid input. " + ClearCommand.MESSAGE_CANCELLED, result.getFeedbackToUser());
+        assertTrue(model.getFilteredPersonList().contains(person));
+    }
+
+    @Test
+    public void execute_clearConfirmYes_subsequentCommandsWorkNormally() throws Exception {
+        logic.execute(ClearCommand.COMMAND_WORD);
+        logic.execute("y");
 
         CommandResult result = logic.execute(ListCommand.COMMAND_WORD);
         assertEquals(ListCommand.MESSAGE_SUCCESS, result.getFeedbackToUser());

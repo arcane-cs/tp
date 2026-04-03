@@ -16,12 +16,21 @@ public class ClearCommand extends Command implements UndoableCommand {
 
     public static final String COMMAND_WORD = "clear";
     public static final String MESSAGE_SUCCESS = "Address book has been cleared!";
+    public static final String MESSAGE_CONFIRMATION = "Are you sure you want to clear all contacts? (y/n)";
+    public static final String MESSAGE_CANCELLED = "Clear cancelled.";
 
     private ReadOnlyAddressBook previousAddressBook;
 
-
     @Override
     public CommandResult execute(Model model) {
+        requireNonNull(model);
+        return CommandResult.awaitingClearConfirmation(MESSAGE_CONFIRMATION);
+    }
+
+    /**
+     * Performs the actual clear operation after confirmation.
+     */
+    public CommandResult executeConfirmed(Model model) {
         requireNonNull(model);
         previousAddressBook = new AddressBook(model.getAddressBook());
         Optional<Person> userProfile = model.getUserProfile();
