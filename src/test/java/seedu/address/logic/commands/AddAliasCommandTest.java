@@ -59,6 +59,30 @@ public class AddAliasCommandTest {
     }
 
     @Test
+    public void execute_aliasesDifferentCaseOnly_success() throws Exception {
+        Person firstPerson = model.getFilteredPersonList().get(0);
+        Game game = new Game("Valorant");
+        Alias upperAlias = new Alias("Benjumpin");
+        Alias lowerAlias = new Alias("benjumpin");
+
+        new AddGameCommand(null, firstPerson.getName(), game, false).execute(model);
+        new AddAliasCommand(null, firstPerson.getName(), game, upperAlias, false).execute(model);
+
+        // Adding an alias that differs only in casing should succeed
+        AddAliasCommand addLowerAliasCommand =
+                new AddAliasCommand(null, firstPerson.getName(), game, lowerAlias, false);
+        addLowerAliasCommand.execute(model);
+
+        Person updatedPerson = model.getFilteredPersonList().stream()
+                .filter(p -> p.isSamePerson(firstPerson))
+                .findFirst().orElseThrow();
+        Game updatedGame = updatedPerson.getGames().stream()
+                .filter(g -> g.equals(game)).findFirst().orElseThrow();
+        assertTrue(updatedGame.getAliases().contains(upperAlias));
+        assertTrue(updatedGame.getAliases().contains(lowerAlias));
+    }
+
+    @Test
     public void execute_duplicateAlias_failure() throws Exception {
         Person firstPerson = model.getFilteredPersonList().get(0);
         Game game = new Game("Valorant");
