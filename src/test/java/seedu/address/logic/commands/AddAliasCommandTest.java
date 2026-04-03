@@ -30,7 +30,7 @@ public class AddAliasCommandTest {
 
     @Test
     public void execute_addAlias_success() throws Exception {
-        Person firstPerson = model.getFilteredPersonList().get(0);
+        Person firstPerson = model.getFilteredPersonList().get(1);
         Game game = new Game("Valorant");
         Alias alias = new Alias("Benjumpin");
 
@@ -48,7 +48,7 @@ public class AddAliasCommandTest {
         Person editedPerson = new Person(firstPerson.getName(), expectedGames);
 
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
-        expectedModel.setPerson(model.getFilteredPersonList().get(0), editedPerson);
+        expectedModel.setPerson(model.getFilteredPersonList().get(1), editedPerson);
 
         String expectedMessage = String.format(AddAliasCommand.MESSAGE_SUCCESS,
                 editedPerson.getName(), game.gameName, alias);
@@ -125,7 +125,7 @@ public class AddAliasCommandTest {
 
     @Test
     public void execute_addAliasByIndex_success() throws Exception {
-        Person firstPerson = model.getFilteredPersonList().get(0);
+        Person firstPerson = model.getFilteredPersonList().get(1);
         Game game = new Game("Valorant");
         Alias alias = new Alias("Benjumpin");
 
@@ -144,7 +144,7 @@ public class AddAliasCommandTest {
         Person editedPerson = new Person(firstPerson.getName(), expectedGames);
 
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
-        expectedModel.setPerson(model.getFilteredPersonList().get(0), editedPerson);
+        expectedModel.setPerson(model.getFilteredPersonList().get(1), editedPerson);
 
         String expectedMessage = String.format(AddAliasCommand.MESSAGE_SUCCESS,
                 editedPerson.getName(), game.gameName, alias);
@@ -157,7 +157,7 @@ public class AddAliasCommandTest {
 
     @Test
     public void execute_invalidIndex_failure() {
-        Index outOfBoundIndex = Index.fromOneBased(model.getFilteredPersonList().size() + 1);
+        Index outOfBoundIndex = Index.fromZeroBased(model.getFilteredPersonList().size() + 1);
         Game game = new Game("Valorant");
         Alias alias = new Alias("Benjumpin");
 

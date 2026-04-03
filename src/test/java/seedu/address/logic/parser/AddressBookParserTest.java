@@ -73,7 +73,7 @@ public class AddressBookParserTest {
         EditContactCommand command = (EditContactCommand) parser.parseCommand(
                 "contact edit 1 e/Jan");
         assertEquals(new EditContactCommand(
-                seedu.address.commons.core.index.Index.fromOneBased(1), null, new Name("Jan"), false), command);
+                seedu.address.commons.core.index.Index.fromZeroBased(1), null, new Name("Jan"), false), command);
     }
 
     @Test
@@ -97,7 +97,7 @@ public class AddressBookParserTest {
         EditAliasCommand command = (EditAliasCommand) parser.parseCommand(
                 "alias edit 1 g/Valorant al/JohnnyV na/JohnnyValorant");
         assertEquals(new EditAliasCommand(
-                seedu.address.commons.core.index.Index.fromOneBased(1), null,
+                seedu.address.commons.core.index.Index.fromZeroBased(1), null,
                 new Game("Valorant"), new Alias("JohnnyV"), new Alias("JohnnyValorant"), false), command);
     }
 

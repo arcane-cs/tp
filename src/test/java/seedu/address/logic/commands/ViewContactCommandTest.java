@@ -64,8 +64,27 @@ public class ViewContactCommandTest {
     }
 
     @Test
+    public void execute_validUserProfile_success() {
+        Person userProfile = model.getFilteredPersonList().get(0);
+
+        ViewContactCommand viewContactCommand = new ViewContactCommand(null, null, true);
+
+        // 2. Use the correct success message for the "me" command
+        String expectedMessage = ViewContactCommand.MESSAGE_SUCCESS_SELF;
+
+        // 3. Since the command does model.updateFilteredPersonList(Person::isUserProfile);
+        // we must do the same to our expectedModel so they match at the end!
+        expectedModel.updateFilteredPersonList(Person::isUserProfile);
+
+        CommandResult expectedCommandResult = new CommandResult(expectedMessage,
+                false, false, userProfile);
+
+        assertCommandSuccess(viewContactCommand, model, expectedCommandResult, expectedModel);
+    }
+
+    @Test
     public void execute_invalidIndexUnfilteredList_throwsCommandException() {
-        Index outOfBoundIndex = Index.fromOneBased(model.getFilteredPersonList().size() + 1);
+        Index outOfBoundIndex = Index.fromZeroBased(model.getFilteredPersonList().size() + 1);
         ViewContactCommand viewContactCommand = new ViewContactCommand(outOfBoundIndex,
                 null, false);
 
@@ -79,15 +98,6 @@ public class ViewContactCommandTest {
                 unknownName, false);
 
         assertCommandFailure(viewContactCommand, model, ViewContactCommand.MESSAGE_PERSON_NOT_FOUND);
-    }
-
-    @Test
-    public void execute_missingUserProfile_throwsCommandException() {
-        // TypicalAddressBook usually does not have a user profile set by default
-        ViewContactCommand viewContactCommand = new ViewContactCommand(null,
-                null, true);
-
-        assertCommandFailure(viewContactCommand, model, ViewContactCommand.MESSAGE_NO_PROFILE);
     }
 
     @Test
@@ -123,5 +133,9 @@ public class ViewContactCommandTest {
 
         // different target types (index vs profile) -> returns false
         assertFalse(viewFirstCommand.equals(viewProfileCommand));
+
+        // Ensure profile equals its own copy
+        ViewContactCommand viewProfileCommandCopy = new ViewContactCommand(null, null, true);
+        assertTrue(viewProfileCommand.equals(viewProfileCommandCopy));
     }
 }

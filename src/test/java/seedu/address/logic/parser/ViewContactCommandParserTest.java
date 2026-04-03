@@ -57,4 +57,17 @@ public class ViewContactCommandParserTest {
         assertParseFailure(parser, "  ",
                 String.format(MESSAGE_INVALID_COMMAND_FORMAT, ViewContactCommand.MESSAGE_USAGE));
     }
+
+    @Test
+    public void parse_invalidIndex_throwsParseException() {
+        // Non-integer input should fail at ParserUtil.parseIndex
+        assertParseFailure(parser, "a", ParserUtil.MESSAGE_INVALID_INDEX);
+    }
+
+    @Test
+    public void parse_bothIndexAndName_throwsParseException() {
+        // Providing an index and name prefix together should fail at ParserUtil.verifyIndexOrNamePresent
+        assertParseFailure(parser, "1 n/John Doe",
+                "Please provide either an index OR a name, not both.");
+    }
 }

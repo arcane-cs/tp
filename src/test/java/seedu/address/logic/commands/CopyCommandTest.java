@@ -71,7 +71,7 @@ public class CopyCommandTest {
 
     @Test
     public void execute_invalidIndexUnfilteredList_throwsCommandException() {
-        Index outOfBoundIndex = Index.fromOneBased(model.getFilteredPersonList().size() + 1);
+        Index outOfBoundIndex = Index.fromZeroBased(model.getFilteredPersonList().size() + 1);
         CopyCommand copyCommand = new CopyCommand(outOfBoundIndex, null, false);
 
         assertCommandFailure(copyCommand, model, Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX);
@@ -83,14 +83,6 @@ public class CopyCommandTest {
         CopyCommand copyCommand = new CopyCommand(null, unknownName, false);
 
         assertCommandFailure(copyCommand, model, CopyCommand.MESSAGE_PERSON_NOT_FOUND);
-    }
-
-    @Test
-    public void execute_missingUserProfile_throwsCommandException() {
-        // Assuming the default TypicalAddressBook does not have a user profile set
-        CopyCommand copyCommand = new CopyCommand(null, null, true);
-
-        assertCommandFailure(copyCommand, model, CopyCommand.MESSAGE_NO_PROFILE);
     }
 
     @Test
@@ -121,5 +113,59 @@ public class CopyCommandTest {
 
         // different target types (index vs profile) -> returns false
         assertFalse(copyFirstCommand.equals(copyProfileCommand));
+    }
+
+    @Test
+    public void execute_validUserProfile_success() throws Exception {
+        // 1. Set up the model with a user profile (using Alice from TypicalPersons)
+        Person userProfile = ALICE;
+
+        CopyCommandStub copyCommand = new CopyCommandStub(null, null, true);
+        CommandResult result = copyCommand.execute(model);
+
+        // 2. Verify success message
+        String expectedMessage = String.format(CopyCommand.MESSAGE_SUCCESS, userProfile.getName().fullName);
+        assertEquals(expectedMessage, result.getFeedbackToUser());
+
+        // 3. Verify the clipboard content contains the correct profile name
+        assertTrue(copyCommand.copiedText.contains("n/" + userProfile.getName().fullName));
+    }
+
+    @Test
+    public void execute_personWithGamesAndAliases_correctCommandString() throws Exception {
+        // Use Alice who typically has games/aliases in TypicalPersons
+        Person personToCopy = ALICE;
+        CopyCommandStub copyCommand = new CopyCommandStub(null, personToCopy.getName(), false);
+
+        copyCommand.execute(model);
+
+        String resultString = copyCommand.copiedText;
+
+        // Verify Name
+        assertTrue(resultString.contains("n/" + personToCopy.getName().fullName));
+
+        // Verify Games and Aliases (Iteration coverage)
+        personToCopy.getGames().forEach(game -> {
+            assertTrue(resultString.contains("g/" + game.gameName));
+            game.getAliases().forEach(alias ->
+                    assertTrue(resultString.contains("al/" + alias.value))
+            );
+        });
+
+        // Ensure it starts with the correct command word
+        assertTrue(resultString.startsWith("contact add"));
+    }
+
+    @Test
+    public void equals_profileCommand_success() {
+        CopyCommand copyProfileCommand = new CopyCommand(null, null, true);
+        CopyCommand copyProfileCommandCopy = new CopyCommand(null, null, true);
+
+        // Same profile flag -> returns true
+        assertTrue(copyProfileCommand.equals(copyProfileCommandCopy));
+
+        // Different profile flag -> returns false
+        CopyCommand copyNameCommand = new CopyCommand(null, ALICE.getName(), false);
+        assertFalse(copyProfileCommand.equals(copyNameCommand));
     }
 }

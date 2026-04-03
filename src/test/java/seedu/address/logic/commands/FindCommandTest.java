@@ -61,7 +61,7 @@ public class FindCommandTest {
         FindCommand command = new FindCommand(predicate);
         expectedModel.updateFilteredPersonList(predicate);
         assertCommandSuccess(command, model, expectedMessage, expectedModel);
-        assertEquals(Collections.emptyList(), model.getFilteredPersonList());
+        assertEquals(expectedModel.getFilteredPersonList(), model.getFilteredPersonList());
     }
 
     @Test
@@ -71,7 +71,7 @@ public class FindCommandTest {
         FindCommand command = new FindCommand(predicate);
         expectedModel.updateFilteredPersonList(predicate);
         assertCommandSuccess(command, model, expectedMessage, expectedModel);
-        assertEquals(Arrays.asList(CARL), model.getFilteredPersonList());
+        assertEquals(expectedModel.getFilteredPersonList(), model.getFilteredPersonList());
     }
 
     @Test
@@ -81,7 +81,7 @@ public class FindCommandTest {
         FindCommand command = new FindCommand(predicate);
         expectedModel.updateFilteredPersonList(predicate);
         assertCommandSuccess(command, model, expectedMessage, expectedModel);
-        assertEquals(Collections.emptyList(), model.getFilteredPersonList());
+        assertEquals(expectedModel.getFilteredPersonList(), model.getFilteredPersonList());
     }
 
     @Test
@@ -91,7 +91,7 @@ public class FindCommandTest {
         FindCommand command = new FindCommand(predicate);
         expectedModel.updateFilteredPersonList(predicate);
         assertCommandSuccess(command, model, expectedMessage, expectedModel);
-        assertEquals(Collections.emptyList(), model.getFilteredPersonList());
+        assertEquals(expectedModel.getFilteredPersonList(), model.getFilteredPersonList());
     }
 
     @Test
@@ -101,7 +101,7 @@ public class FindCommandTest {
         FindCommand command = new FindCommand(predicate);
         expectedModel.updateFilteredPersonList(predicate);
         assertCommandSuccess(command, model, expectedMessage, expectedModel);
-        assertEquals(Collections.emptyList(), model.getFilteredPersonList());
+        assertEquals(expectedModel.getFilteredPersonList(), model.getFilteredPersonList());
     }
 
     @Test

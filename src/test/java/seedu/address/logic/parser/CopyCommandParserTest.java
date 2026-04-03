@@ -54,4 +54,25 @@ public class CopyCommandParserTest {
         assertParseFailure(parser, "  ",
                 String.format(MESSAGE_INVALID_COMMAND_FORMAT, CopyCommand.MESSAGE_USAGE));
     }
+
+    @Test
+    public void parse_validUserProfileCaseInsensitive_returnsCopyCommand() {
+        // Check uppercase "ME"
+        assertParseSuccess(parser, "ME", new CopyCommand(null, null, true));
+        // Check mixed case "Me"
+        assertParseSuccess(parser, "mE", new CopyCommand(null, null, true));
+    }
+
+    @Test
+    public void parse_invalidIndex_throwsParseException() {
+        // Non-integer input should fail
+        assertParseFailure(parser, "a", ParserUtil.MESSAGE_INVALID_INDEX);
+    }
+
+    @Test
+    public void parse_bothIndexAndName_throwsParseException() {
+        // Providing an index and name prefix together should fail based on your ParserUtil logic
+        assertParseFailure(parser, "1 n/John Doe",
+                "Please provide either an index OR a name, not both.");
+    }
 }
