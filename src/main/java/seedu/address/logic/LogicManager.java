@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 import javafx.collections.ObservableList;
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.commons.core.LogsCenter;
+import seedu.address.logic.commands.ClearCommand;
 import seedu.address.logic.commands.Command;
 import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.DeleteContactCommand;
@@ -39,6 +40,7 @@ public class LogicManager implements Logic {
     private final AddressBookParser addressBookParser;
     private Person pendingDeletePerson = null;
     private DeleteContactCommand pendingDeleteCommand = null;
+    private ClearCommand pendingClearCommand = null;
     private final Deque<UndoableCommand> commandHistory = new ArrayDeque<>();
 
     /**
@@ -58,6 +60,10 @@ public class LogicManager implements Logic {
             return handleDeleteConfirmation(commandText);
         }
 
+        if (pendingClearCommand != null) {
+            return handleClearConfirmation(commandText);
+        }
+
         CommandResult commandResult;
         Command command = commandText.trim().equals(UndoCommand.COMMAND_WORD)
                 ? new UndoCommand(commandHistory)
@@ -69,6 +75,11 @@ public class LogicManager implements Logic {
             if (command instanceof DeleteContactCommand) {
                 pendingDeleteCommand = (DeleteContactCommand) command;
             }
+            return commandResult;
+        }
+
+        if (commandResult.isAwaitingClearConfirmation()) {
+            pendingClearCommand = (ClearCommand) command;
             return commandResult;
         }
 
@@ -116,6 +127,32 @@ public class LogicManager implements Logic {
             return new CommandResult("Deletion of " + name + " cancelled.");
         } else {
             return new CommandResult("Invalid input. Deletion of " + name + " cancelled.");
+        }
+    }
+
+    /**
+     * Handles the user's y/n response to a pending clear confirmation.
+     */
+    private CommandResult handleClearConfirmation(String commandText) throws CommandException {
+        String response = commandText.trim().toLowerCase();
+        ClearCommand clearCommand = pendingClearCommand;
+        pendingClearCommand = null;
+
+        if (response.equals("y") || response.equals("yes")) {
+            CommandResult result = clearCommand.executeConfirmed(model);
+            commandHistory.push(clearCommand);
+            try {
+                storage.saveAddressBook(model.getAddressBook());
+            } catch (AccessDeniedException e) {
+                throw new CommandException(String.format(FILE_OPS_PERMISSION_ERROR_FORMAT, e.getMessage()), e);
+            } catch (IOException ioe) {
+                throw new CommandException(String.format(FILE_OPS_ERROR_FORMAT, ioe.getMessage()), ioe);
+            }
+            return result;
+        } else if (response.equals("n") || response.equals("no")) {
+            return new CommandResult(ClearCommand.MESSAGE_CANCELLED);
+        } else {
+            return new CommandResult("Invalid input. " + ClearCommand.MESSAGE_CANCELLED);
         }
     }
 

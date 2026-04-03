@@ -14,110 +14,79 @@ public class CommandResult {
 
     private final String feedbackToUser;
 
-    /**
-     * Help information should be shown to the user.
-     */
+    /** Help information should be shown to the user. */
     private final boolean isShowHelp;
 
-    /**
-     * The application should exit.
-     */
+    /** The application should exit. */
     private final boolean isExit;
 
-    /**
-     * A confirmation is required before proceeding.
-     */
+    /** A delete confirmation is required before proceeding. */
     private final boolean isAwaitingConfirmation;
 
-    /**
-     * The person pending deletion confirmation, or null if not applicable.
-     */
+    /** The person pending deletion confirmation, or null if not applicable. */
     private final Person pendingPerson;
+
+    /** A clear confirmation is required before proceeding. */
+    private final boolean isAwaitingClearConfirmation;
 
     /** The theme to switch to, or null if not applicable. */
     private final String themeToSwitch;
 
-    /**
-     * The profile/contact to be viewed in the UI, or null if not applicable.
-     * */
+    /** The profile/contact to be viewed in the UI, or null if not applicable. */
     private final Person personToView;
 
-    /**
-     * Whether the ViewPanel should be cleared.
-     */
+    /** Whether the ViewPanel should be cleared. */
     private final boolean shouldClearView;
 
-    /**
-     * Constructs a {@code CommandResult} with the specified fields.
-     */
-    public CommandResult(String feedbackToUser, boolean showHelp, boolean exit, Person personToView) {
+    /** Private master constructor. */
+    private CommandResult(String feedbackToUser, boolean isShowHelp, boolean isExit,
+                          boolean isAwaitingConfirmation, boolean isAwaitingClearConfirmation,
+                          Person pendingPerson, String themeToSwitch, Person personToView,
+                          boolean shouldClearView) {
         this.feedbackToUser = requireNonNull(feedbackToUser);
-        this.isShowHelp = showHelp;
-        this.isExit = exit;
-        this.isAwaitingConfirmation = false;
-        this.pendingPerson = null;
-        this.themeToSwitch = null;
+        this.isShowHelp = isShowHelp;
+        this.isExit = isExit;
+        this.isAwaitingConfirmation = isAwaitingConfirmation;
+        this.isAwaitingClearConfirmation = isAwaitingClearConfirmation;
+        this.pendingPerson = pendingPerson;
+        this.themeToSwitch = themeToSwitch;
         this.personToView = personToView;
-        this.shouldClearView = false;
-    }
-
-    /**
-     * Constructs a {@code CommandResult} that signals the ViewPanel should be cleared.
-     */
-    public CommandResult(String feedbackToUser, boolean shouldClearView) {
-        this.feedbackToUser = requireNonNull(feedbackToUser);
-        this.isShowHelp = false;
-        this.isExit = false;
-        this.isAwaitingConfirmation = false;
-        this.pendingPerson = null;
-        this.themeToSwitch = null;
-        this.personToView = null;
         this.shouldClearView = shouldClearView;
     }
 
-    /**
-     * Constructs a {@code CommandResult} for commands that require help or exit.
-     */
+    /** Constructs a {@code CommandResult} with the specified fields. */
+    public CommandResult(String feedbackToUser, boolean showHelp, boolean exit, Person personToView) {
+        this(feedbackToUser, showHelp, exit, false, false, null, null, personToView, false);
+    }
+
+    /** Constructs a {@code CommandResult} that signals the ViewPanel should be cleared. */
+    public CommandResult(String feedbackToUser, boolean shouldClearView) {
+        this(feedbackToUser, false, false, false, false, null, null, null, shouldClearView);
+    }
+
+    /** Constructs a {@code CommandResult} for commands that require help or exit. */
     public CommandResult(String feedbackToUser, boolean showHelp, boolean exit) {
         this(feedbackToUser, showHelp, exit, null);
     }
 
-
-
-    /**
-     * Constructs a {@code CommandResult} for commands that require a theme switch.
-     */
+    /** Constructs a {@code CommandResult} for commands that require a theme switch. */
     public CommandResult(String feedbackToUser, String themeToSwitch) {
-        this.feedbackToUser = requireNonNull(feedbackToUser);
-        this.isShowHelp = false;
-        this.isExit = false;
-        this.isAwaitingConfirmation = false;
-        this.pendingPerson = null;
-        this.themeToSwitch = themeToSwitch;
-        this.personToView = null;
-        this.shouldClearView = false;
+        this(feedbackToUser, false, false, false, false, null, themeToSwitch, null, false);
     }
 
-    /**
-     * Constructs a {@code CommandResult} with the specified {@code feedbackToUser},
-     * and other fields set to their default value.
-     */
+    /** Constructs a {@code CommandResult} with default field values. */
     public CommandResult(String feedbackToUser) {
         this(feedbackToUser, false, false, null);
     }
 
-    /**
-     * Constructs a {@code CommandResult} that awaits deletion confirmation for the given person.
-     */
+    /** Constructs a {@code CommandResult} that awaits deletion confirmation for the given person. */
     public CommandResult(String feedbackToUser, Person pendingPerson) {
-        this.feedbackToUser = requireNonNull(feedbackToUser);
-        this.isShowHelp = false;
-        this.isExit = false;
-        this.isAwaitingConfirmation = true;
-        this.pendingPerson = requireNonNull(pendingPerson);
-        this.themeToSwitch = null;
-        this.personToView = null;
-        this.shouldClearView = false;
+        this(feedbackToUser, false, false, true, false, requireNonNull(pendingPerson), null, null, false);
+    }
+
+    /** Returns a {@code CommandResult} that awaits clear confirmation. */
+    public static CommandResult awaitingClearConfirmation(String feedbackToUser) {
+        return new CommandResult(feedbackToUser, false, false, false, true, null, null, null, false);
     }
 
     public String getFeedbackToUser() {
@@ -134,6 +103,10 @@ public class CommandResult {
 
     public boolean isAwaitingConfirmation() {
         return isAwaitingConfirmation;
+    }
+
+    public boolean isAwaitingClearConfirmation() {
+        return isAwaitingClearConfirmation;
     }
 
     public Person getPendingPerson() {
@@ -158,7 +131,6 @@ public class CommandResult {
             return true;
         }
 
-        // instanceof handles nulls
         if (!(other instanceof CommandResult)) {
             return false;
         }
@@ -168,6 +140,7 @@ public class CommandResult {
                 && isShowHelp == otherCommandResult.isShowHelp
                 && isExit == otherCommandResult.isExit
                 && isAwaitingConfirmation == otherCommandResult.isAwaitingConfirmation
+                && isAwaitingClearConfirmation == otherCommandResult.isAwaitingClearConfirmation
                 && Objects.equals(themeToSwitch, otherCommandResult.themeToSwitch)
                 && Objects.equals(pendingPerson, otherCommandResult.pendingPerson)
                 && Objects.equals(personToView, otherCommandResult.personToView);
@@ -176,7 +149,7 @@ public class CommandResult {
     @Override
     public int hashCode() {
         return Objects.hash(feedbackToUser, isShowHelp, isExit, isAwaitingConfirmation,
-                themeToSwitch, pendingPerson, personToView);
+                isAwaitingClearConfirmation, themeToSwitch, pendingPerson, personToView);
     }
 
     @Override
@@ -186,6 +159,7 @@ public class CommandResult {
                 .add("showHelp", isShowHelp)
                 .add("exit", isExit)
                 .add("awaitingConfirmation", isAwaitingConfirmation)
+                .add("awaitingClearConfirmation", isAwaitingClearConfirmation)
                 .add("themeToSwitch", themeToSwitch)
                 .add("pendingPerson", pendingPerson)
                 .add("personToView", personToView)

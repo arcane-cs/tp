@@ -1,7 +1,7 @@
 package seedu.address.logic.commands;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static seedu.address.logic.commands.CommandTestUtil.assertCommandSuccess;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.testutil.TypicalPersons.getTypicalAddressBook;
 
 import java.util.HashSet;
@@ -18,26 +18,39 @@ import seedu.address.model.person.Person;
 public class ClearCommandTest {
 
     @Test
-    public void execute_emptyAddressBook_success() {
+    public void execute_returnsConfirmationPrompt() {
         Model model = new ModelManager();
-        Model expectedModel = new ModelManager();
-
-        assertCommandSuccess(new ClearCommand(), model, ClearCommand.MESSAGE_SUCCESS, expectedModel);
+        CommandResult result = new ClearCommand().execute(model);
+        assertTrue(result.isAwaitingClearConfirmation());
+        assertEquals(ClearCommand.MESSAGE_CONFIRMATION, result.getFeedbackToUser());
     }
 
     @Test
-    public void execute_nonEmptyAddressBook_success() {
+    public void executeConfirmed_emptyAddressBook_success() {
+        Model model = new ModelManager();
+        ClearCommand clearCommand = new ClearCommand();
+        clearCommand.execute(model);
+        CommandResult result = clearCommand.executeConfirmed(model);
+        assertEquals(ClearCommand.MESSAGE_SUCCESS, result.getFeedbackToUser());
+    }
+
+    @Test
+    public void executeConfirmed_nonEmptyAddressBook_success() {
         Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
         Person userProfile = model.getFilteredPersonList().get(0);
         AddressBook ab = new AddressBook();
         ab.addPerson(userProfile);
         Model expectedModel = new ModelManager(ab, new UserPrefs());
 
-        assertCommandSuccess(new ClearCommand(), model, ClearCommand.MESSAGE_SUCCESS, expectedModel);
+        ClearCommand clearCommand = new ClearCommand();
+        clearCommand.execute(model);
+        clearCommand.executeConfirmed(model);
+
+        assertEquals(expectedModel, model);
     }
 
     @Test
-    public void execute_addressBookWithUserProfile_preservesUserProfile() {
+    public void executeConfirmed_addressBookWithUserProfile_preservesUserProfile() {
         Person userProfile = new Person(new Name("John Doe"), new HashSet<>(), true);
         AddressBook ab = new AddressBook();
         ab.addPerson(userProfile);
@@ -46,7 +59,11 @@ public class ClearCommandTest {
         Model expectedModel = new ModelManager(new AddressBook(), new UserPrefs());
         expectedModel.addPerson(userProfile);
 
-        assertCommandSuccess(new ClearCommand(), model, ClearCommand.MESSAGE_SUCCESS, expectedModel);
+        ClearCommand clearCommand = new ClearCommand();
+        clearCommand.execute(model);
+        clearCommand.executeConfirmed(model);
+
+        assertEquals(expectedModel, model);
     }
 
     @Test
@@ -56,9 +73,9 @@ public class ClearCommandTest {
 
         ClearCommand clearCommand = new ClearCommand();
         clearCommand.execute(model);
+        clearCommand.executeConfirmed(model);
         clearCommand.undo(model);
 
         assertEquals(originalAddressBook, model.getAddressBook());
     }
-
 }
