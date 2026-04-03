@@ -28,7 +28,7 @@ public class ViewProfileCommandTest {
 
     @Test
     public void execute_profileExists_success() throws Exception {
-        Person userProfile = new Person(new Name("John Doe"), new HashSet<>(), new HashSet<>(), true);
+        Person userProfile = new Person(new Name("John Doe"), new HashSet<>(), true);
         AddressBook ab = new AddressBook();
         ab.addPerson(userProfile);
         Model model = new ModelManager(ab, new UserPrefs());

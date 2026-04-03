@@ -75,8 +75,7 @@ public class EditContactCommand extends Command implements UndoableCommand {
                     .orElseThrow(() -> new CommandException(MESSAGE_PERSON_NOT_FOUND));
         }
 
-        Person editedPerson = new Person(newName, personToEdit.getTags(), personToEdit.getGames(),
-                personToEdit.isUserProfile());
+        Person editedPerson = new Person(newName, personToEdit.getGames(), personToEdit.isUserProfile());
 
         if (!personToEdit.isSamePerson(editedPerson) && model.hasPerson(editedPerson)) {
             throw new CommandException(MESSAGE_DUPLICATE_PERSON);

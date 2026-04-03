@@ -97,8 +97,7 @@ public class EditContactCommandTest {
 
     @Test
     public void execute_userProfile_success() throws Exception {
-        Person userProfile = new Person(new Name("John Doe"), new java.util.HashSet<>(),
-                new java.util.HashSet<>(), true);
+        Person userProfile = new Person(new Name("John Doe"), new java.util.HashSet<>(), true);
         AddressBook ab = new AddressBook();
         ab.addPerson(userProfile);
         Model profileModel = new ModelManager(ab, new UserPrefs());
