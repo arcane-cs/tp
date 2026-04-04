@@ -118,7 +118,6 @@ public class DeleteAliasCommand extends Command implements ConfirmableDeleteComm
 
         Person editedPerson = new Person(
                 personToEdit.getName(),
-                personToEdit.getTags(),
                 updatedGames,
                 personToEdit.isUserProfile()
         );

@@ -31,7 +31,7 @@ public class DeleteContactCommand extends Command implements ConfirmableDeleteCo
     public static final String MESSAGE_PERSON_NOT_FOUND = "Error: Name not found";
     public static final String MESSAGE_DELETE_CONFIRMATION =
             "%1$s\nAre you sure you want to delete %2$s? (y/n)";
-    public static final String MESSAGE_DELETE_CANCELLED = "Deletion of contact %1$s cancelled.";
+    public static final String MESSAGE_DELETE_CANCELLED = "Deletion of %1$s cancelled.";
 
     private final Index targetIndex;
     private final Name targetName;

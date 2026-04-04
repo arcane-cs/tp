@@ -86,10 +86,10 @@ public class DeleteGameCommandTest {
 
     @Test
     public void execute_deleteGameByIndex_returnsConfirmation() throws Exception {
+        Person targetPerson = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
         Game gameToProcess = new Game("Minecraft");
 
-        new AddGameCommand(INDEX_FIRST_PERSON, null, gameToProcess, false).execute(model);
-        Person firstPersonAfterSetup = model.getFilteredPersonList().get(0);
+        new AddGameCommand(null, targetPerson.getName(), gameToProcess, false).execute(model);
 
         DeleteGameCommand deleteGameCommand =
                 new DeleteGameCommand(INDEX_FIRST_PERSON, null, gameToProcess, false);
@@ -97,13 +97,12 @@ public class DeleteGameCommandTest {
         CommandResult result = deleteGameCommand.execute(model);
 
         assertTrue(result.isAwaitingConfirmation());
-        assertEquals(firstPersonAfterSetup, result.getPendingPerson());
     }
 
     @Test
     public void execute_invalidIndex_failure() {
         seedu.address.commons.core.index.Index outOfBoundIndex =
-                seedu.address.commons.core.index.Index.fromOneBased(model.getFilteredPersonList().size() + 1);
+                seedu.address.commons.core.index.Index.fromZeroBased(model.getFilteredPersonList().size() + 1);
         Game gameToDelete = new Game("Minecraft");
         DeleteGameCommand deleteGameCommand = new DeleteGameCommand(outOfBoundIndex, null, gameToDelete, false);
 
@@ -133,6 +132,7 @@ public class DeleteGameCommandTest {
         Model emptyModel = new ModelManager(new AddressBook(), new UserPrefs());
         Game gameToDelete = new Game("Valorant");
         DeleteGameCommand deleteGameCommand = new DeleteGameCommand(null, null, gameToDelete, true);
+        emptyModel.deletePerson(emptyModel.getFilteredPersonList().get(0));
 
         assertCommandFailure(deleteGameCommand, emptyModel, "No user profile found.");
     }

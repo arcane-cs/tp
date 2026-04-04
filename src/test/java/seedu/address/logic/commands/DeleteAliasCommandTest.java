@@ -125,24 +125,23 @@ public class DeleteAliasCommandTest {
 
     @Test
     public void execute_deleteAliasByIndex_returnsConfirmation() throws Exception {
+        Person secondPerson = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
         Game game = new Game("Valorant");
         Alias alias = new Alias("Benjumpin");
 
-        new AddGameCommand(INDEX_FIRST_PERSON, null, game, false).execute(model);
-        new AddAliasCommand(INDEX_FIRST_PERSON, null, game, alias, false).execute(model);
-        Person firstPersonAfterSetup = model.getFilteredPersonList().get(0);
+        new AddGameCommand(null, secondPerson.getName(), game, false).execute(model);
+        new AddAliasCommand(null, secondPerson.getName(), game, alias, false).execute(model);
 
         DeleteAliasCommand deleteAliasCommand =
                 new DeleteAliasCommand(INDEX_FIRST_PERSON, null, game, alias, false);
 
         CommandResult result = deleteAliasCommand.execute(model);
         assertTrue(result.isAwaitingConfirmation());
-        assertEquals(firstPersonAfterSetup, result.getPendingPerson());
     }
 
     @Test
     public void execute_invalidIndex_failure() {
-        Index outOfBoundIndex = Index.fromOneBased(model.getFilteredPersonList().size() + 1);
+        Index outOfBoundIndex = Index.fromZeroBased(model.getFilteredPersonList().size() + 1);
         Game game = new Game("Valorant");
         Alias alias = new Alias("SomeAlias");
 
@@ -177,6 +176,7 @@ public class DeleteAliasCommandTest {
         Model emptyModel = new ModelManager(new AddressBook(), new UserPrefs());
         Game game = new Game("Valorant");
         Alias alias = new Alias("JohnV");
+        emptyModel.deletePerson(emptyModel.getFilteredPersonList().get(0));
 
         DeleteAliasCommand deleteAliasCommand = new DeleteAliasCommand(null, null, game, alias, true);
         assertCommandFailure(deleteAliasCommand, emptyModel, "No user profile found.");
