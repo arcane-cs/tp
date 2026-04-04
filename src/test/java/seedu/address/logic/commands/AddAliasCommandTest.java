@@ -30,7 +30,7 @@ public class AddAliasCommandTest {
 
     @Test
     public void execute_addAlias_success() throws Exception {
-        Person firstPerson = model.getFilteredPersonList().get(0);
+        Person firstPerson = model.getFilteredPersonList().get(1);
         Game game = new Game("Valorant");
         Alias alias = new Alias("Benjumpin");
 
@@ -45,10 +45,10 @@ public class AddAliasCommandTest {
         Set<Game> expectedGames = new HashSet<>();
         expectedGames.add(expectedGame);
 
-        Person editedPerson = new Person(firstPerson.getName(), firstPerson.getTags(), expectedGames);
+        Person editedPerson = new Person(firstPerson.getName(), expectedGames);
 
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
-        expectedModel.setPerson(model.getFilteredPersonList().get(0), editedPerson);
+        expectedModel.setPerson(model.getFilteredPersonList().get(1), editedPerson);
 
         String expectedMessage = String.format(AddAliasCommand.MESSAGE_SUCCESS,
                 editedPerson.getName(), game.gameName, alias);
@@ -56,6 +56,30 @@ public class AddAliasCommandTest {
         CommandResult expectedCommandResult = new CommandResult(expectedMessage, false, false, editedPerson);
 
         assertCommandSuccess(addAliasCommand, model, expectedCommandResult, expectedModel);
+    }
+
+    @Test
+    public void execute_aliasesDifferentCaseOnly_success() throws Exception {
+        Person firstPerson = model.getFilteredPersonList().get(0);
+        Game game = new Game("Valorant");
+        Alias upperAlias = new Alias("Benjumpin");
+        Alias lowerAlias = new Alias("benjumpin");
+
+        new AddGameCommand(null, firstPerson.getName(), game, false).execute(model);
+        new AddAliasCommand(null, firstPerson.getName(), game, upperAlias, false).execute(model);
+
+        // Adding an alias that differs only in casing should succeed
+        AddAliasCommand addLowerAliasCommand =
+                new AddAliasCommand(null, firstPerson.getName(), game, lowerAlias, false);
+        addLowerAliasCommand.execute(model);
+
+        Person updatedPerson = model.getFilteredPersonList().stream()
+                .filter(p -> p.isSamePerson(firstPerson))
+                .findFirst().orElseThrow();
+        Game updatedGame = updatedPerson.getGames().stream()
+                .filter(g -> g.equals(game)).findFirst().orElseThrow();
+        assertTrue(updatedGame.getAliases().contains(upperAlias));
+        assertTrue(updatedGame.getAliases().contains(lowerAlias));
     }
 
     @Test
@@ -110,7 +134,7 @@ public class AddAliasCommandTest {
         Set<Game> expectedGames = new HashSet<>();
         expectedGames.add(expectedGame);
 
-        Person editedPerson = new Person(firstPerson.getName(), firstPerson.getTags(), expectedGames);
+        Person editedPerson = new Person(firstPerson.getName(), expectedGames);
 
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
         expectedModel.setPerson(model.getFilteredPersonList().get(0), editedPerson);
@@ -125,7 +149,7 @@ public class AddAliasCommandTest {
 
     @Test
     public void execute_addAliasByIndex_success() throws Exception {
-        Person firstPerson = model.getFilteredPersonList().get(0);
+        Person firstPerson = model.getFilteredPersonList().get(1);
         Game game = new Game("Valorant");
         Alias alias = new Alias("Benjumpin");
 
@@ -141,10 +165,10 @@ public class AddAliasCommandTest {
         Set<Game> expectedGames = new HashSet<>();
         expectedGames.add(expectedGame);
 
-        Person editedPerson = new Person(firstPerson.getName(), firstPerson.getTags(), expectedGames);
+        Person editedPerson = new Person(firstPerson.getName(), expectedGames);
 
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
-        expectedModel.setPerson(model.getFilteredPersonList().get(0), editedPerson);
+        expectedModel.setPerson(model.getFilteredPersonList().get(1), editedPerson);
 
         String expectedMessage = String.format(AddAliasCommand.MESSAGE_SUCCESS,
                 editedPerson.getName(), game.gameName, alias);
@@ -157,7 +181,7 @@ public class AddAliasCommandTest {
 
     @Test
     public void execute_invalidIndex_failure() {
-        Index outOfBoundIndex = Index.fromOneBased(model.getFilteredPersonList().size() + 1);
+        Index outOfBoundIndex = Index.fromZeroBased(model.getFilteredPersonList().size() + 1);
         Game game = new Game("Valorant");
         Alias alias = new Alias("Benjumpin");
 
@@ -170,7 +194,7 @@ public class AddAliasCommandTest {
 
     @Test
     public void execute_useUserProfile_success() throws Exception {
-        Person userProfile = new Person(new Name("John Doe"), new HashSet<>(), new HashSet<>(), true);
+        Person userProfile = new Person(new Name("John Doe"), new HashSet<>(), true);
         AddressBook ab = new AddressBook();
         ab.addPerson(userProfile);
         Model profileModel = new ModelManager(ab, new UserPrefs());
@@ -194,6 +218,7 @@ public class AddAliasCommandTest {
         Model emptyModel = new ModelManager(new AddressBook(), new UserPrefs());
         Game game = new Game("Valorant");
         Alias alias = new Alias("JohnV");
+        emptyModel.deletePerson(emptyModel.getFilteredPersonList().get(0));
 
         AddAliasCommand addAliasCommand = new AddAliasCommand(null, null, game, alias, true);
         assertCommandFailure(addAliasCommand, emptyModel, "No user profile found.");

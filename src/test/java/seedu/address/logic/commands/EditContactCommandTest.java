@@ -45,7 +45,7 @@ public class EditContactCommandTest {
 
     @Test
     public void execute_editByIndex_success() {
-        Person personToEdit = model.getFilteredPersonList().get(0);
+        Person personToEdit = model.getFilteredPersonList().get(1);
         Name newName = new Name("Alicia");
         EditContactCommand command = new EditContactCommand(INDEX_FIRST_PERSON, null, newName, false);
 
@@ -68,7 +68,7 @@ public class EditContactCommandTest {
 
     @Test
     public void execute_invalidIndex_throwsCommandException() {
-        Index outOfBoundIndex = Index.fromOneBased(model.getFilteredPersonList().size() + 1);
+        Index outOfBoundIndex = Index.fromZeroBased(model.getFilteredPersonList().size() + 1);
         EditContactCommand command = new EditContactCommand(outOfBoundIndex, null, new Name("Ben"), false);
         assertCommandFailure(command, model, seedu.address.logic.Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX);
     }
@@ -83,7 +83,7 @@ public class EditContactCommandTest {
 
     @Test
     public void execute_duplicateNameByIndex_throwsCommandException() {
-        Person second = model.getFilteredPersonList().get(1);
+        Person second = model.getFilteredPersonList().get(2);
         EditContactCommand command = new EditContactCommand(INDEX_FIRST_PERSON, null, second.getName(), false);
         assertCommandFailure(command, model, EditContactCommand.MESSAGE_DUPLICATE_PERSON);
     }
@@ -97,8 +97,7 @@ public class EditContactCommandTest {
 
     @Test
     public void execute_userProfile_success() throws Exception {
-        Person userProfile = new Person(new Name("John Doe"), new java.util.HashSet<>(),
-                new java.util.HashSet<>(), true);
+        Person userProfile = new Person(new Name("John Doe"), new java.util.HashSet<>(), true);
         AddressBook ab = new AddressBook();
         ab.addPerson(userProfile);
         Model profileModel = new ModelManager(ab, new UserPrefs());
@@ -115,7 +114,25 @@ public class EditContactCommandTest {
     public void execute_noUserProfile_throwsCommandException() {
         Model emptyModel = new ModelManager(new AddressBook(), new UserPrefs());
         EditContactCommand command = new EditContactCommand(null, null, new Name("Johnny"), true);
+        emptyModel.deletePerson(emptyModel.getFilteredPersonList().get(0));
+
         assertCommandFailure(command, emptyModel, "No user profile found.");
+    }
+
+    @Test
+    public void undo_editContact_restoresOriginalName() throws Exception {
+        Person personToEdit = model.getFilteredPersonList().get(0);
+        Name originalName = personToEdit.getName();
+        Name newName = new Name("Alicia");
+
+        EditContactCommand command = new EditContactCommand(null, originalName, newName, false);
+        command.execute(model);
+
+        assertEquals(newName, model.getFilteredPersonList().get(0).getName());
+
+        command.undo(model);
+
+        assertEquals(originalName, model.getFilteredPersonList().get(0).getName());
     }
 
     @Test

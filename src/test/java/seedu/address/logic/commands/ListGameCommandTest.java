@@ -65,7 +65,7 @@ public class ListGameCommandTest {
 
     @Test
     public void execute_listGamesByIndex_success() throws Exception {
-        Person firstPerson = model.getFilteredPersonList().get(0);
+        Person firstPerson = model.getFilteredPersonList().get(1);
         Game gameToAdd = new Game("Minecraft");
 
         // Setup: Add one game
@@ -84,7 +84,7 @@ public class ListGameCommandTest {
 
     @Test
     public void execute_invalidIndex_failure() {
-        Index outOfBoundIndex = Index.fromOneBased(model.getFilteredPersonList().size() + 1);
+        Index outOfBoundIndex = Index.fromZeroBased(model.getFilteredPersonList().size() + 1);
 
         ListGameCommand listGameCommand = new ListGameCommand(outOfBoundIndex, null, false);
 
@@ -94,7 +94,7 @@ public class ListGameCommandTest {
 
     @Test
     public void execute_useUserProfile_success() throws Exception {
-        Person userProfile = new Person(new Name("John Doe"), new HashSet<>(), new HashSet<>(), true);
+        Person userProfile = new Person(new Name("John Doe"), new HashSet<>(), true);
         AddressBook ab = new AddressBook();
         ab.addPerson(userProfile);
         Model profileModel = new ModelManager(ab, new UserPrefs());
@@ -113,6 +113,8 @@ public class ListGameCommandTest {
     public void execute_noProfile_failure() {
         Model emptyModel = new ModelManager(new AddressBook(), new UserPrefs());
         ListGameCommand listGameCommand = new ListGameCommand(null, null, true);
+        emptyModel.deletePerson(emptyModel.getFilteredPersonList().get(0));
+
         assertCommandFailure(listGameCommand, emptyModel, "No user profile found.");
     }
 
@@ -126,7 +128,7 @@ public class ListGameCommandTest {
     public void equals() {
         Name nameA = new Name("Alice");
         Name nameB = new Name("Bob");
-        Index secondIndex = Index.fromOneBased(2);
+        Index secondIndex = Index.fromZeroBased(2);
 
         ListGameCommand listByIndex = new ListGameCommand(INDEX_FIRST_PERSON, null, false);
         ListGameCommand listByName = new ListGameCommand(null, nameA, false);

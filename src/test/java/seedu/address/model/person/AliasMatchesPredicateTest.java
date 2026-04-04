@@ -19,7 +19,7 @@ public class AliasMatchesPredicateTest {
         aliases.add(new Alias(aliasValue));
         Set<Game> games = new HashSet<>();
         games.add(new Game(gameName, aliases));
-        return new Person(new Name(name), new HashSet<>(), games);
+        return new Person(new Name(name), games);
     }
 
     @Test
@@ -53,6 +53,21 @@ public class AliasMatchesPredicateTest {
 
         // case-insensitive match
         predicate = new AliasMatchesPredicate("benjumpin");
+        assertTrue(predicate.test(buildPersonWithAlias("Ben", "Valorant", "BenJumpin")));
+    }
+
+    @Test
+    public void test_partialKeyword_returnsTrue() {
+        // Partial match at start of alias
+        AliasMatchesPredicate predicate = new AliasMatchesPredicate("BenJ");
+        assertTrue(predicate.test(buildPersonWithAlias("Ben", "Valorant", "BenJumpin")));
+
+        // Partial match in middle of alias
+        predicate = new AliasMatchesPredicate("Jump");
+        assertTrue(predicate.test(buildPersonWithAlias("Ben", "Valorant", "BenJumpin")));
+
+        // Partial match case-insensitive
+        predicate = new AliasMatchesPredicate("benj");
         assertTrue(predicate.test(buildPersonWithAlias("Ben", "Valorant", "BenJumpin")));
     }
 

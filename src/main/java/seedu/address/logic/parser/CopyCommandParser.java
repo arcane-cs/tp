@@ -21,16 +21,23 @@ public class CopyCommandParser implements Parser<CopyCommand> {
     public CopyCommand parse(String args) throws ParseException {
         ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args, PREFIX_NAME);
 
-        String preamble = argMultimap.getPreamble();
+        String preamble = argMultimap.getPreamble().trim();
+        boolean useUserProfile = preamble.equalsIgnoreCase("me");
         boolean hasNamePrefix = argMultimap.getValue(PREFIX_NAME).isPresent();
 
-        // Ensure user didn't enter both an index AND a name, or neither
-        ParserUtil.verifyIndexOrNamePresent(preamble, hasNamePrefix, CopyCommand.MESSAGE_USAGE);
+        if (!useUserProfile) {
+            ParserUtil.verifyIndexOrNamePresent(preamble, hasNamePrefix, CopyCommand.MESSAGE_USAGE);
+        } else if (hasNamePrefix) {
+            throw new ParseException("Please do not provide a name prefix (n/) "
+                    + "when targeting your own profile with 'me'.");
+        }
+
         argMultimap.verifyNoDuplicatePrefixesFor(PREFIX_NAME);
 
-        Index index = preamble.isEmpty() ? null : ParserUtil.parseIndex(preamble);
+        Index index = (!useUserProfile && !preamble.isEmpty() && !hasNamePrefix)
+                ? ParserUtil.parseIndex(preamble) : null;
         Name name = hasNamePrefix ? ParserUtil.parseName(argMultimap.getValue(PREFIX_NAME).get()) : null;
 
-        return new CopyCommand(index, name);
+        return new CopyCommand(index, name, useUserProfile);
     }
 }

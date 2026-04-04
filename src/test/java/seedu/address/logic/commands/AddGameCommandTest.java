@@ -34,7 +34,7 @@ public class AddGameCommandTest {
         expectedGames.add(gameToAdd);
 
         Person editedPerson = new Person(
-                firstPerson.getName(), firstPerson.getTags(), expectedGames);
+                firstPerson.getName(), expectedGames);
 
         AddGameCommand addGameCommand = new AddGameCommand(null,
                 firstPerson.getName(),
@@ -88,7 +88,7 @@ public class AddGameCommandTest {
 
         Set<Game> expectedGames = new HashSet<>(firstPerson.getGames());
         expectedGames.add(gameToAdd);
-        Person editedPerson = new Person(firstPerson.getName(), firstPerson.getTags(), expectedGames);
+        Person editedPerson = new Person(firstPerson.getName(), expectedGames);
 
         String expectedMessage = String.format(AddGameCommand.MESSAGE_SUCCESS,
                 gameToAdd.gameName,
@@ -107,7 +107,7 @@ public class AddGameCommandTest {
 
     @Test
     public void execute_addGameByIndex_success() {
-        Person firstPerson = model.getFilteredPersonList().get(0);
+        Person firstPerson = model.getFilteredPersonList().get(1);
         Game gameToAdd = new Game("Minecraft");
 
         // Testing the Index path (Name is null)
@@ -115,7 +115,7 @@ public class AddGameCommandTest {
 
         Set<Game> expectedGames = new HashSet<>(firstPerson.getGames());
         expectedGames.add(gameToAdd);
-        Person editedPerson = new Person(firstPerson.getName(), firstPerson.getTags(), expectedGames);
+        Person editedPerson = new Person(firstPerson.getName(), expectedGames);
 
         String expectedMessage = String.format(AddGameCommand.MESSAGE_SUCCESS,
                 gameToAdd.gameName,
@@ -132,7 +132,7 @@ public class AddGameCommandTest {
     @Test
     public void execute_invalidIndex_failure() {
         // Create an index that is larger than the size of the list
-        Index outOfBoundIndex = Index.fromOneBased(model.getFilteredPersonList().size() + 1);
+        Index outOfBoundIndex = Index.fromZeroBased(model.getFilteredPersonList().size() + 1);
         Game gameToAdd = new Game("Minecraft");
         AddGameCommand addGameCommand = new AddGameCommand(outOfBoundIndex, null, gameToAdd, false);
 
@@ -143,8 +143,7 @@ public class AddGameCommandTest {
 
     @Test
     public void execute_useUserProfile_success() throws Exception {
-        Person userProfile = new Person(new Name("John Doe"), new java.util.HashSet<>(), new java.util.HashSet<>(),
-                true);
+        Person userProfile = new Person(new Name("John Doe"), new java.util.HashSet<>(), true);
         AddressBook ab = new AddressBook();
         ab.addPerson(userProfile);
         Model profileModel = new ModelManager(ab, new UserPrefs());
@@ -163,6 +162,7 @@ public class AddGameCommandTest {
     @Test
     public void execute_noProfile_failure() {
         Model emptyModel = new ModelManager(new AddressBook(), new UserPrefs());
+        emptyModel.deletePerson(emptyModel.getFilteredPersonList().get(0));
         Game gameToAdd = new Game("Minecraft");
         AddGameCommand addGameCommand = new AddGameCommand(null, null, gameToAdd, true);
         assertCommandFailure(addGameCommand, emptyModel, "No user profile found.");
