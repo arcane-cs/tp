@@ -71,7 +71,8 @@ public class EditContactCommandTest {
         Index outOfBoundIndex = Index.fromZeroBased(model.getFilteredPersonList().size() + 1);
         EditContactCommand command = new EditContactCommand(outOfBoundIndex, null, new Name("Ben"), false);
         assertCommandFailure(command, model,
-                seedu.address.logic.Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX + "\n" + EditContactCommand.MESSAGE_USAGE);
+                seedu.address.logic.Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX
+                        + "\n" + EditContactCommand.MESSAGE_USAGE);
     }
 
     @Test
