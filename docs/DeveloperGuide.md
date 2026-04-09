@@ -11,12 +11,6 @@
 
 --------------------------------------------------------------------------------------------------------------------
 
-## **Acknowledgements**
-
-_{ list here sources of all reused/adapted ideas, code, documentation, and third-party libraries -- include links to the original source as well }_
-
---------------------------------------------------------------------------------------------------------------------
-
 ## **Setting up, getting started**
 
 Refer to the guide [_Setting up and getting started_](SettingUp.md).
@@ -396,8 +390,6 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 | `* *`    | user       | delete a game that a contact plays | remove games that the contact no longer plays                |
 | `*`      | new user   | see usage instructions             | refer to command syntax when I forget how to use the app     | \
 
-*{More to be added}*
-
 ### Use cases
 
 (For all use cases below, the **System** is `Harmony` and the **Actor** is the `user`, unless specified otherwise)
@@ -557,14 +549,10 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
    Use case ends.
 
-*{More to be added}*
-
 ### Non-Functional Requirements
 
 1.   Initial startup should take no longer than 2s.
 2.   A user with above average typing speed for regular English text (i.e. not code, not system admin commands) should be able to accomplish most of the tasks faster using commands than using the mouse.
-
-*{More to be added}*
 
 ### Glossary
 
@@ -589,16 +577,14 @@ testers are expected to do more *exploratory* testing.
 
    1. Download the jar file and copy into an empty folder
 
-   1. Double-click the jar file Expected: Shows the GUI with a set of sample contacts. The window size may not be optimum.
+   2. Double-click the jar file Expected: Shows the GUI with a set of sample contacts. The window size may not be optimum.
 
-1. Saving window preferences
+2. Saving window preferences
 
    1. Resize the window to an optimum size. Move the window to a different location. Close the window.
 
-   1. Re-launch the app by double-clicking the jar file.<br>
+   2. Re-launch the app by double-clicking the jar file.<br>
        Expected: The most recent window size and location is retained.
-
-1. _{ more test cases …​ }_
 
 ### Deleting a person
 
@@ -606,16 +592,15 @@ testers are expected to do more *exploratory* testing.
 
    1. Prerequisites: List all persons using the `list` command. Multiple persons in the list.
 
-   1. Test case: `delete 1`<br>
+   2. Test case: `delete 1`<br>
       Expected: First contact is deleted from the list. Details of the deleted contact shown in the status message. Timestamp in the status bar is updated.
 
-   1. Test case: `delete 0`<br>
+   3. Test case: `delete 0`<br>
       Expected: No person is deleted. Error details shown in the status message. Status bar remains the same.
 
-   1. Other incorrect delete commands to try: `delete`, `delete x`, `...` (where x is larger than the list size)<br>
+   4. Other incorrect delete commands to try: `delete`, `delete x`, `...` (where x is larger than the list size)<br>
       Expected: Similar to previous.
 
-1. _{ more test cases …​ }_
 
 ### Editing a contact's name
 
@@ -623,31 +608,23 @@ testers are expected to do more *exploratory* testing.
 
    1. Prerequisites: List all persons using the `list` command. At least one contact in the list (e.g. `Alex Yeoh` at index 1).
 
-   1. Test case: `contact edit n/Alex Yeoh e/Alex`<br>
+   2. Test case: `contact edit n/Alex Yeoh e/Alex`<br>
       Expected: Contact is renamed. Success message `Contact updated: Alex Yeoh → Alex` shown.
 
-   1. Test case: `contact edit 1 e/Alex`<br>
+   3. Test case: `contact edit 1 e/Alex`<br>
       Expected: First contact is renamed. Success message `Contact updated: [original name] → Alex` shown.
 
-   1. Test case: `contact edit n/NonExistent e/NewName`<br>
+   4. Test case: `contact edit n/NonExistent e/NewName`<br>
       Expected: No contact is renamed. Error message `Error: Name not found` shown.
 
-   1. Test case: `contact edit 999 e/NewName` (index out of bounds)<br>
+   5. Test case: `contact edit 999 e/NewName` (index out of bounds)<br>
       Expected: No contact is renamed. Invalid index error shown.
 
-   1. Test case: `contact edit 1 n/Alex Yeoh e/NewName` (both index and name provided)<br>
+   6. Test case: `contact edit 1 n/Alex Yeoh e/NewName` (both index and name provided)<br>
       Expected: No contact is renamed. Error message `Please provide either an index OR a name, not both.` shown.
 
-   1. Test case: `contact edit n/Alex Yeoh e/Bernice Yu` (where `Bernice Yu` already exists)<br>
+   7. Test case: `contact edit n/Alex Yeoh e/Bernice Yu` (where `Bernice Yu` already exists)<br>
       Expected: No contact is renamed. Error message `Error: A contact with that name already exists` shown.
 
-   1. Test case: `contact edit n/Alex Yeoh` (missing `e/` prefix)<br>
+   8. Test case: `contact edit n/Alex Yeoh` (missing `e/` prefix)<br>
       Expected: No contact is renamed. Invalid command format error shown.
-
-### Saving data
-
-1. Dealing with missing/corrupted data files
-
-   1. _{explain how to simulate a missing/corrupted file, and the expected behavior}_
-
-1. _{ more test cases …​ }_
