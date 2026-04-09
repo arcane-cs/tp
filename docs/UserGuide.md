@@ -18,31 +18,30 @@ Harmony is a **desktop app for managing contacts and their gaming aliases, optim
 * [Quick start](#quick-start)
 
 **General**
-* [Viewing help : `help`](#viewing-help--help)
-* [Listing all contacts : `list`](#listing-all-contacts--list)
-* [Undoing the last command : `undo`](#undoing-the-last-command--undo)
-* [Clearing all entries : `clear`](#clearing-all-entries--clear)
-* [Changing the UI theme : `theme`](#changing-the-ui-theme--theme)
-* [Exiting the program : `exit`](#exiting-the-program--exit)
+* [Viewing help : `help`](#viewing-help-help)
+* [Listing all contacts : `list`](#listing-all-contacts-list)
+* [Undoing the last command : `undo`](#undoing-the-last-command-undo)
+* [Clearing all entries : `clear`](#clearing-all-entries-clear)
+* [Changing the UI theme : `theme`](#changing-the-ui-theme-theme)
+* [Exiting the program : `exit`](#exiting-the-program-exit)
 
 **Contact Management**
-* [Adding a contact : `contact add`](#adding-a-contact--contact-add)
-* [Viewing a contact's profile : `view`](#viewing-a-contacts-profile--view)
-* [Copying a contact : `copy`](#copying-a-contact--copy)
-* [Editing a contact's name : `contact edit`](#editing-a-contacts-name--contact-edit)
+* [Adding a contact : `contact add`](#adding-a-contact-contact-add)
+* [Viewing a contact's profile : `view`](#viewing-a-contacts-profile-view)
+* [Copying a contact : `copy`](#copying-a-contact-copy)
+* [Editing a contact's name : `contact edit`](#editing-a-contacts-name-contact-edit)
 * [Locating contacts : `find`](#locating-contacts-find)
-* [Deleting a contact : `contact delete`](#deleting-a-contact--contact-delete)
-* [Copying a contact : `copy`](#copying-a-contact--copy)
+* [Deleting a contact : `contact delete`](#deleting-a-contact-contact-delete)
 
 **Game Management**
-* [Adding a game : `game add`](#adding-a-game-to-a-contact--game-add)
-* [Deleting a game : `game delete`](#deleting-a-game-from-a-contact--game-delete)
-* [Listing games : `game list`](#listing-games-of-a-contact--game-list)
+* [Adding a game : `game add`](#adding-a-game-to-a-contact-game-add)
+* [Deleting a game : `game delete`](#deleting-a-game-from-a-contact-game-delete)
+* [Listing games : `game list`](#listing-games-of-a-contact-game-list)
 
 **Alias Management**
-* [Adding an alias : `alias add`](#adding-an-alias-to-a-game--alias-add)
-* [Editing an alias : `alias edit`](#editing-an-alias-of-a-game--alias-edit)
-* [Deleting an alias : `alias delete`](#deleting-an-alias-from-a-game--alias-delete)
+* [Adding an alias : `alias add`](#adding-an-alias-to-a-game-alias-add)
+* [Editing an alias : `alias edit`](#editing-an-alias-of-a-game-alias-edit)
+* [Deleting an alias : `alias delete`](#deleting-an-alias-from-a-game-alias-delete)
 
 --------------------------------------------------------------------------------------------------------------------
 
