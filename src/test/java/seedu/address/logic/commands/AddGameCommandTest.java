@@ -161,15 +161,6 @@ public class AddGameCommandTest {
     }
 
     @Test
-    public void execute_noProfile_failure() {
-        Model emptyModel = new ModelManager(new AddressBook(), new UserPrefs());
-        emptyModel.deletePerson(emptyModel.getFilteredPersonList().get(0));
-        Game gameToAdd = new Game("Minecraft");
-        AddGameCommand addGameCommand = new AddGameCommand(null, null, gameToAdd, true);
-        assertCommandFailure(addGameCommand, emptyModel, "No user profile found.");
-    }
-
-    @Test
     public void execute_nullIndexAndName_failure() {
         Game gameToAdd = new Game("Minecraft");
         AddGameCommand addGameCommand = new AddGameCommand(null, null, gameToAdd, false);

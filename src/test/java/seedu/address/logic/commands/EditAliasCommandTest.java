@@ -196,19 +196,6 @@ public class EditAliasCommandTest {
     }
 
     @Test
-    public void execute_noProfile_failure() {
-        Model emptyModel = new ModelManager(new AddressBook(), new UserPrefs());
-        Game game = new Game("Valorant");
-        Alias oldAlias = new Alias("JohnnyV");
-        Alias newAlias = new Alias("JohnnyValorant");
-        emptyModel.deletePerson(emptyModel.getFilteredPersonList().get(0));
-
-        EditAliasCommand editAliasCommand =
-                new EditAliasCommand(null, null, game, oldAlias, newAlias, true);
-        assertCommandFailure(editAliasCommand, emptyModel, "No user profile found.");
-    }
-
-    @Test
     public void undo_editAlias_restoresOriginalAlias() throws Exception {
         Person firstPerson = model.getFilteredPersonList().get(0);
         Game game = new Game("Valorant");

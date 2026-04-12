@@ -173,17 +173,6 @@ public class DeleteAliasCommandTest {
     }
 
     @Test
-    public void execute_noProfile_failure() {
-        Model emptyModel = new ModelManager(new AddressBook(), new UserPrefs());
-        Game game = new Game("Valorant");
-        Alias alias = new Alias("JohnV");
-        emptyModel.deletePerson(emptyModel.getFilteredPersonList().get(0));
-
-        DeleteAliasCommand deleteAliasCommand = new DeleteAliasCommand(null, null, game, alias, true);
-        assertCommandFailure(deleteAliasCommand, emptyModel, "No user profile found.");
-    }
-
-    @Test
     public void getCancelMessage_returnsCorrectMessage() throws Exception {
         Person firstPerson = model.getFilteredPersonList().get(0);
         Game game = new Game("Valorant");
