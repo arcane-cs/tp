@@ -235,16 +235,19 @@ public class DeleteContactCommandTest {
     public void performDeletion_deleteUserProfile_success() throws Exception {
         // Setup a custom model with a User Profile
         Model customModel = new ModelManager(new AddressBook(), new UserPrefs());
-        Person userProfile = new Person(new Name("My Profile"), new java.util.HashSet<>(), true);
-        customModel.addPerson(userProfile);
+        Person userProfile = new Person(new Name("ALICE"), new java.util.HashSet<>(), true);
+        customModel.setPerson(PLACEHOLDER_PROFILE, userProfile);
 
         // Create a command targeting the user profile (3rd boolean parameter = true)
         DeleteContactCommand deleteCommand = new DeleteContactCommand(null, null, true);
 
         // Execute the actual deletion
-        CommandResult result = deleteCommand.performDeletion(customModel);
+        CommandResult result = deleteCommand.execute(customModel);
 
-        // Verify the custom success message is returned
+        assertEquals("Are you sure you want to reset User Profile? (y/n)", result.getFeedbackToUser());
+
+        result = deleteCommand.performDeletion(customModel);
+
         assertEquals("Your User Profile has been successfully reset to default.", result.getFeedbackToUser());
 
         // Verify the original profile is no longer in the list (replaced by placeholder)
