@@ -228,17 +228,23 @@ You can interact with your User Profile using the `me` keyword in place of an in
 * `contact edit me e/ProGamer` — rename your profile
 * `game add me g/Valorant` — add a game to your profile
 * `alias add me g/Valorant al/ProV` — add an alias to a game on your profile
-
+* `contact delete me` — resets the profile to "PLACEHOLDER"
 <box type="tip" seamless>
 
 Your User Profile always appears at the top of the contact list. It is not counted in the contact list total displayed after commands like `list` or `find`.
 
 </box>
 
+<box type="tip" seamless>
+If the User Profile is not detected during runtime or start up, a PLACEHOLDER will be generated.
+</box>
+
 <box type="warning" seamless>
-
 `me` is a special reserved keyword — it is **not** the same as `n/me`. Parameter `n/me` refers to contacts whose name is "me", whereas `me` specifically targets your own User Profile.
+</box>
 
+<box type="warning" seamless>
+If multiple User Profiles are detected on start up, it will be deemed as a corrupt addressbook.json. This can be remedied by modifying the `addressbook.json` to only contain one `"isUserProfile" : true`
 </box>
 
 --------------------------------------------------------------------------------------------------------------------
