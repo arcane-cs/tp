@@ -19,13 +19,13 @@ public class FindCommand extends Command {
 
     public static final String MESSAGE_USAGE = COMMAND_WORD + ": Finds all persons matching ALL the given search "
             + "criteria (case-insensitive) and displays them as a list with index numbers.\n"
-            + "Parameters: [KEYWORD MORE_KEYWORDS...] [g/GAME_NAME] [al/ALIAS]\n"
+            + "Parameters: [n/NAME] [g/GAME_NAME] [al/ALIAS]\n"
             + "At least one constraint must be provided. Multiple constraints are combined with AND logic.\n"
-            + "Example: " + COMMAND_WORD + " alice pauline\n"
+            + "Example: " + COMMAND_WORD + " n/Alice\n"
             + "Example: " + COMMAND_WORD + " g/Valorant\n"
             + "Example: " + COMMAND_WORD + " al/BenJumpin\n"
-            + "Example: " + COMMAND_WORD + " alice g/Valorant\n"
-            + "Example: " + COMMAND_WORD + " alice g/Valorant al/BenJumpin";
+            + "Example: " + COMMAND_WORD + " n/Alice g/Valorant\n"
+            + "Example: " + COMMAND_WORD + " n/Alice g/Valorant al/BenJumpin";
 
     private final Predicate<Person> predicate;
 
