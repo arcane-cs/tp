@@ -24,16 +24,18 @@ public class AddGameCommand extends Command implements UndoableCommand {
 
     public static final String COMMAND_WORD = "add";
 
-    // 1. Updated MESSAGE_USAGE to show both Index and Name options
     public static final String MESSAGE_USAGE = "game " + COMMAND_WORD
-            + ": Adds a game to a contact using either their index OR their full name.\n"
+            + ": Adds a game to a contact using either their index, full name, or 'me' for your own profile.\n"
             + "Parameters (by Index): INDEX (must be a positive integer) " + PREFIX_GAME + "GAME_NAME\n"
             + "Parameters (by Name): " + PREFIX_NAME + "CONTACT_NAME " + PREFIX_GAME + "GAME_NAME\n"
+            + "Parameters (User Profile): me " + PREFIX_GAME + "GAME_NAME\n"
             + "Example 1: game " + COMMAND_WORD + " 1 " + PREFIX_GAME + "Minecraft\n"
-            + "Example 2: game " + COMMAND_WORD + " " + PREFIX_NAME + "Zi Xuan " + PREFIX_GAME + "Minecraft";
+            + "Example 2: game " + COMMAND_WORD + " " + PREFIX_NAME + "Zi Xuan " + PREFIX_GAME + "Minecraft\n"
+            + "Example 3: game " + COMMAND_WORD + " me " + PREFIX_GAME + "Minecraft";
 
     public static final String MESSAGE_SUCCESS = "Game %1$s added to %2$s";
-    public static final String MESSAGE_CONTACT_NOT_FOUND = "Error: Contact does not exist.";
+    public static final String MESSAGE_CONTACT_NOT_FOUND = "Error: Contact not found in the current list."
+            + " Use 'list' to show all contacts.";
     public static final String MESSAGE_DUPLICATE_GAME = "Error: Game already exists for the contact.";
 
     private final Index targetIndex;
@@ -69,7 +71,7 @@ public class AddGameCommand extends Command implements UndoableCommand {
             List<Person> lastShownList = model.getFilteredPersonList();
             if (targetIndex != null) {
                 if (targetIndex.getZeroBased() >= lastShownList.size()) {
-                    throw new CommandException(Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX);
+                    throw new CommandException(Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX + "\n" + MESSAGE_USAGE);
                 }
                 personToEdit = lastShownList.get(targetIndex.getZeroBased());
             } else if (targetName != null) {

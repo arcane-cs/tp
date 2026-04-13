@@ -2,6 +2,7 @@ package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
+import static seedu.address.model.util.GeneratePlaceholder.PLACEHOLDER_PROFILE;
 
 import java.util.List;
 
@@ -16,26 +17,33 @@ import seedu.address.model.person.Person;
 /**
  * Deletes a person identified by index or name from the address book.
  */
-public class DeleteContactCommand extends Command implements UndoableCommand {
+public class DeleteContactCommand extends Command implements ConfirmableDeleteCommand, UndoableCommand {
 
     public static final String COMMAND_WORD = "contact delete";
 
     public static final String MESSAGE_USAGE = COMMAND_WORD
-            + ": Deletes the contact identified by index or name.\n"
+            + ": Deletes the contact identified by index, name, or 'me' for your own profile.\n"
             + "Parameters (by Index): INDEX (must be a positive integer)\n"
             + "Parameters (by Name): " + PREFIX_NAME + "NAME\n"
+            + "Parameters (User Profile): me\n"
             + "Example 1: " + COMMAND_WORD + " 1\n"
-            + "Example 2: " + COMMAND_WORD + " " + PREFIX_NAME + "bob";
+            + "Example 2: " + COMMAND_WORD + " " + PREFIX_NAME + "bob\n"
+            + "Example 3: " + COMMAND_WORD + " me";
 
     public static final String MESSAGE_DELETE_PERSON_SUCCESS = "Contact deleted: %1$s";
-    public static final String MESSAGE_PERSON_NOT_FOUND = "Error: Name not found";
+    public static final String MESSAGE_PERSON_NOT_FOUND = "Error: Contact not found in the current list."
+            + " Use 'list' to show all contacts.";
     public static final String MESSAGE_DELETE_CONFIRMATION =
             "%1$s\nAre you sure you want to delete %2$s? (y/n)";
+    public static final String MESSAGE_DELETE_CANCELLED = "Deletion of %1$s cancelled.";
+    public static final String MESSAGE_DELETE_USERPROFILE = "Your User Profile has been successfully reset to default.";
+    public static final String MESSAGE_DELETE_USERPROFILE_CONFIRMATION =
+            "Are you sure you want to reset User Profile? (y/n)";
 
     private final Index targetIndex;
     private final Name targetName;
     private final boolean useUserProfile;
-    private Person deletedPerson;
+    private Person personToDelete;
 
     /**
      * @param targetIndex    index of the contact to delete, or null if using name/profile
@@ -46,10 +54,6 @@ public class DeleteContactCommand extends Command implements UndoableCommand {
         this.targetIndex = targetIndex;
         this.targetName = targetName;
         this.useUserProfile = useUserProfile;
-    }
-
-    public void setDeletedPerson(Person person) {
-        this.deletedPerson = person;
     }
 
     @Override
@@ -64,7 +68,7 @@ public class DeleteContactCommand extends Command implements UndoableCommand {
             List<Person> lastShownList = model.getFilteredPersonList();
             if (targetIndex != null) {
                 if (targetIndex.getZeroBased() >= lastShownList.size()) {
-                    throw new CommandException(Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX);
+                    throw new CommandException(Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX + "\n" + MESSAGE_USAGE);
                 }
                 personToDelete = lastShownList.get(targetIndex.getZeroBased());
             } else if (targetName != null) {
@@ -77,14 +81,32 @@ public class DeleteContactCommand extends Command implements UndoableCommand {
             }
         }
 
+        this.personToDelete = personToDelete;
         String confirmationMessage = String.format(MESSAGE_DELETE_CONFIRMATION,
                 Messages.format(personToDelete), personToDelete.getName());
-        return new CommandResult(confirmationMessage, personToDelete);
+        return new CommandResult(useUserProfile ? MESSAGE_DELETE_USERPROFILE_CONFIRMATION : confirmationMessage,
+                personToDelete);
+    }
+
+    @Override
+    public String getCancelMessage() {
+        return String.format(MESSAGE_DELETE_CANCELLED, personToDelete.getName());
+    }
+
+    @Override
+    public CommandResult performDeletion(Model model) {
+        model.deletePerson(personToDelete);
+        return new CommandResult(useUserProfile ? MESSAGE_DELETE_USERPROFILE
+                : String.format(MESSAGE_DELETE_PERSON_SUCCESS, personToDelete.getName()));
     }
 
     @Override
     public void undo(Model model) {
-        model.addPerson(deletedPerson);
+        if (useUserProfile) {
+            model.setPerson(PLACEHOLDER_PROFILE, personToDelete);
+        } else {
+            model.addPerson(personToDelete);
+        }
     }
 
     @Override

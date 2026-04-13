@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.model.Model.PREDICATE_SHOW_ALL_PERSONS;
+import static seedu.address.model.util.GeneratePlaceholder.PLACEHOLDER_PROFILE;
 import static seedu.address.testutil.Assert.assertThrows;
 import static seedu.address.testutil.TypicalPersons.ALICE;
 import static seedu.address.testutil.TypicalPersons.BENSON;
@@ -11,11 +12,14 @@ import static seedu.address.testutil.TypicalPersons.BENSON;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.HashSet;
 
 import org.junit.jupiter.api.Test;
 
 import seedu.address.commons.core.GuiSettings;
+import seedu.address.model.person.Name;
 import seedu.address.model.person.NameContainsKeywordsPredicate;
+import seedu.address.model.person.Person;
 import seedu.address.testutil.AddressBookBuilder;
 
 public class ModelManagerTest {
@@ -26,7 +30,9 @@ public class ModelManagerTest {
     public void constructor() {
         assertEquals(new UserPrefs(), modelManager.getUserPrefs());
         assertEquals(new GuiSettings(), modelManager.getGuiSettings());
-        assertEquals(new AddressBook(), new AddressBook(modelManager.getAddressBook()));
+        AddressBook ab = new AddressBook();
+        ab.addPerson(PLACEHOLDER_PROFILE);
+        assertEquals(ab, new AddressBook(modelManager.getAddressBook()));
     }
 
     @Test
@@ -89,8 +95,78 @@ public class ModelManagerTest {
     }
 
     @Test
+    public void deletePerson_personIsRemovedFromAddressBook() {
+        modelManager.addPerson(ALICE);
+        modelManager.deletePerson(ALICE);
+        assertFalse(modelManager.hasPerson(ALICE));
+    }
+
+    @Test
+    public void setPerson_personIsEditedInAddressBook() {
+        modelManager.addPerson(ALICE);
+        modelManager.setPerson(ALICE, BENSON);
+        assertFalse(modelManager.hasPerson(ALICE));
+        assertTrue(modelManager.hasPerson(BENSON));
+    }
+
+    @Test
     public void getFilteredPersonList_modifyList_throwsUnsupportedOperationException() {
         assertThrows(UnsupportedOperationException.class, () -> modelManager.getFilteredPersonList().remove(0));
+    }
+
+    @Test
+    public void updateFilteredPersonList_nullPredicate_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> modelManager.updateFilteredPersonList(null));
+    }
+
+    @Test
+    public void setAddressBook_nullAddressBook_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> modelManager.setAddressBook(null));
+    }
+
+    @Test
+    public void setAddressBook_validAddressBook_setsAddressBook() {
+        AddressBook newData = new AddressBook();
+        newData.addPerson(ALICE);
+        modelManager.setAddressBook(newData);
+        assertEquals(newData, modelManager.getAddressBook());
+    }
+
+    @Test
+    public void addUserProfile_emptyProfile_addsPlaceholderProfile() {
+        // Set an empty AddressBook to guarantee there is no user profile
+        modelManager.setAddressBook(new AddressBook());
+        assertTrue(modelManager.getUserProfile().isEmpty());
+
+        // Action
+        modelManager.addUserProfile();
+
+        // Verify that a user profile has been generated and added
+        assertFalse(modelManager.getUserProfile().isEmpty());
+
+        // Verify that the UserProfile is in index 0
+        assertTrue(modelManager.getFilteredPersonList().get(0).isUserProfile());
+    }
+
+    @Test
+    public void addUserProfile_existingProfile_doesNotOverwrite() {
+        // Set an empty AddressBook
+        modelManager.setAddressBook(new AddressBook());
+
+        // Create and add a known, custom user profile
+        Person customProfile = new Person(new Name("Custom Profile"), new HashSet<>(), true);
+        modelManager.addPerson(customProfile);
+
+        // Sanity check to ensure the custom profile exists
+        assertFalse(modelManager.getUserProfile().isEmpty());
+        assertEquals(customProfile, modelManager.getUserProfile().get());
+
+        // Action: Attempt to add a profile when one already exists
+        modelManager.addUserProfile();
+
+        // Verify that the existing custom profile was untouched and NOT overwritten
+        assertFalse(modelManager.getUserProfile().isEmpty());
+        assertEquals(customProfile, modelManager.getUserProfile().get());
     }
 
     @Test

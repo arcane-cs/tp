@@ -29,18 +29,23 @@ public class AddAliasCommand extends Command implements UndoableCommand {
     public static final String COMMAND_WORD = "alias add";
 
     public static final String MESSAGE_USAGE = COMMAND_WORD
-            + ": Adds an alias to a game of a contact using either their index OR their full name.\n"
+            + ": Adds an alias to a game of a contact using either their index, full name,"
+            + " or 'me' for your own profile.\n"
             + "Parameters (by Index): INDEX (must be a positive integer) "
             + PREFIX_GAME + "GAME " + PREFIX_ALIAS + "ALIAS\n"
             + "Parameters (by Name): "
             + PREFIX_NAME + "CONTACT_NAME " + PREFIX_GAME + "GAME " + PREFIX_ALIAS + "ALIAS\n"
+            + "Parameters (User Profile): me " + PREFIX_GAME + "GAME " + PREFIX_ALIAS + "ALIAS\n"
             + "Example 1: "
             + COMMAND_WORD + " 1 " + PREFIX_GAME + "Valorant " + PREFIX_ALIAS + "Benjumpin\n"
             + "Example 2: "
-            + COMMAND_WORD + " " + PREFIX_NAME + "Benjamin " + PREFIX_GAME + "Valorant " + PREFIX_ALIAS + "Benjumpin";
+            + COMMAND_WORD + " " + PREFIX_NAME + "Benjamin " + PREFIX_GAME + "Valorant " + PREFIX_ALIAS + "Benjumpin\n"
+            + "Example 3: "
+            + COMMAND_WORD + " me " + PREFIX_GAME + "Valorant " + PREFIX_ALIAS + "Benjumpin";
 
     public static final String MESSAGE_SUCCESS = "Alias '%3$s' added to %1$s's game: %2$s";
-    public static final String MESSAGE_PERSON_NOT_FOUND = "Error: Contact does not exist.";
+    public static final String MESSAGE_PERSON_NOT_FOUND = "Error: Contact not found in the current list."
+            + " Use 'list' to show all contacts.";
     public static final String MESSAGE_ALIAS_NOT_FOUND = "Error: Alias does not exist for this contact";
     public static final String MESSAGE_GAME_NOT_FOUND = "Error: This contact does not have this game.";
     public static final String MESSAGE_DUPLICATE_ALIAS = "Error: This alias already exists for this game.";
@@ -78,7 +83,7 @@ public class AddAliasCommand extends Command implements UndoableCommand {
             List<Person> lastShownList = model.getFilteredPersonList();
             if (targetIndex != null) {
                 if (targetIndex.getZeroBased() >= lastShownList.size()) {
-                    throw new CommandException(Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX);
+                    throw new CommandException(Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX + "\n" + MESSAGE_USAGE);
                 }
                 personToEdit = lastShownList.get(targetIndex.getZeroBased());
             } else if (targetName != null) {

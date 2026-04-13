@@ -1,6 +1,7 @@
 package seedu.address.model;
 
 import static java.util.Objects.requireNonNull;
+import static seedu.address.model.util.GeneratePlaceholder.PLACEHOLDER_PROFILE;
 
 import java.util.List;
 
@@ -74,6 +75,14 @@ public class AddressBook implements ReadOnlyAddressBook {
      */
     public void addPerson(Person p) {
         persons.add(p);
+    }
+
+    /**
+     * Adds the UserProfile to the address book.
+     * The UserProfile must not already exist in the address book.
+     */
+    public void addUserProfile() {
+        persons.addFirst(PLACEHOLDER_PROFILE);
     }
 
     /**

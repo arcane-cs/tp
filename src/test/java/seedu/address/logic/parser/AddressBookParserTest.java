@@ -7,9 +7,7 @@ import static seedu.address.logic.Messages.MESSAGE_UNKNOWN_COMMAND;
 import static seedu.address.testutil.Assert.assertThrows;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_PERSON;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
@@ -28,6 +26,7 @@ import seedu.address.logic.commands.FindCommand;
 import seedu.address.logic.commands.HelpCommand;
 import seedu.address.logic.commands.ListCommand;
 import seedu.address.logic.commands.ListGameCommand;
+import seedu.address.logic.commands.ViewContactCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.game.Game;
 import seedu.address.model.person.Alias;
@@ -118,10 +117,8 @@ public class AddressBookParserTest {
 
     @Test
     public void parseCommand_find() throws Exception {
-        List<String> keywords = Arrays.asList("foo", "bar", "baz");
-        FindCommand command = (FindCommand) parser.parseCommand(
-                FindCommand.COMMAND_WORD + " " + keywords.stream().collect(Collectors.joining(" ")));
-        assertEquals(new FindCommand(new NameContainsKeywordsPredicate(keywords)), command);
+        FindCommand command = (FindCommand) parser.parseCommand(FindCommand.COMMAND_WORD + " n/foo");
+        assertEquals(new FindCommand(new NameContainsKeywordsPredicate(List.of("foo"))), command);
     }
 
     @Test
@@ -134,6 +131,24 @@ public class AddressBookParserTest {
     public void parseCommand_list() throws Exception {
         assertTrue(parser.parseCommand(ListCommand.COMMAND_WORD) instanceof ListCommand);
         assertTrue(parser.parseCommand(ListCommand.COMMAND_WORD + " 3") instanceof ListCommand);
+    }
+
+    @Test
+    public void parseCommand_viewByIndex() throws Exception {
+        ViewContactCommand command = (ViewContactCommand) parser.parseCommand("view 1");
+        assertEquals(new ViewContactCommand(INDEX_FIRST_PERSON, null, false), command);
+    }
+
+    @Test
+    public void parseCommand_viewByProfile() throws Exception {
+        ViewContactCommand command = (ViewContactCommand) parser.parseCommand("view me");
+        assertEquals(new ViewContactCommand(null, null, true), command);
+    }
+
+    @Test
+    public void parseCommand_viewByName() throws Exception {
+        ViewContactCommand command = (ViewContactCommand) parser.parseCommand("view n/Alice");
+        assertEquals(new ViewContactCommand(null, new Name("Alice"), false), command);
     }
 
     @Test

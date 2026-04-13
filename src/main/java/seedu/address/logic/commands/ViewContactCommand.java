@@ -19,7 +19,7 @@ import seedu.address.model.person.Person;
  */
 public class ViewContactCommand extends Command {
 
-    public static final String COMMAND_WORD = "contact view";
+    public static final String COMMAND_WORD = "view";
 
     public static final String MESSAGE_USAGE = COMMAND_WORD
             + ": Views the full details of a specific contact. Use 'me' to view your own profile.\n"
@@ -32,7 +32,8 @@ public class ViewContactCommand extends Command {
     public static final String MESSAGE_SUCCESS_SELF = "Displaying your profile.";
     public static final String MESSAGE_NO_PROFILE = "No user profile found.";
     public static final String MESSAGE_SUCCESS_CONTACT = "Viewing Contact: %1$s";
-    public static final String MESSAGE_PERSON_NOT_FOUND = "Error: Contact does not exist.";
+    public static final String MESSAGE_PERSON_NOT_FOUND = "Error: Contact not found in the current list."
+            + " Use 'list' to show all contacts.";
 
     private final Index targetIndex;
     private final Name targetName;
@@ -79,7 +80,6 @@ public class ViewContactCommand extends Command {
             if (model.getUserProfile().isEmpty()) {
                 throw new CommandException(MESSAGE_NO_PROFILE);
             }
-            model.updateFilteredPersonList(Person::isUserProfile);
             Person userProfile = model.getUserProfile().get();
             return new CommandResult(MESSAGE_SUCCESS_SELF, false, false, userProfile);
         }

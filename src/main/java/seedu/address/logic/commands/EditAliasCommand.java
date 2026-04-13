@@ -29,19 +29,25 @@ public class EditAliasCommand extends Command implements UndoableCommand {
     public static final String COMMAND_WORD = "alias edit";
 
     public static final String MESSAGE_USAGE = COMMAND_WORD
-            + ": Edits an alias of a game of a contact using either their index OR their full name.\n"
+            + ": Edits an alias of a game of a contact using either their index, full name,"
+            + " or 'me' for your own profile.\n"
             + "Parameters (by Index): INDEX (must be a positive integer) "
             + PREFIX_GAME + "GAME " + PREFIX_ALIAS + "OLD_ALIAS " + PREFIX_NEW_ALIAS + "NEW_ALIAS\n"
             + "Parameters (by Name): "
             + PREFIX_NAME + "CONTACT_NAME " + PREFIX_GAME + "GAME " + PREFIX_ALIAS + "OLD_ALIAS "
             + PREFIX_NEW_ALIAS + "NEW_ALIAS\n"
+            + "Parameters (User Profile): me " + PREFIX_GAME + "GAME " + PREFIX_ALIAS + "OLD_ALIAS "
+            + PREFIX_NEW_ALIAS + "NEW_ALIAS\n"
             + "Example 1: " + COMMAND_WORD + " 1 " + PREFIX_GAME + "Valorant "
             + PREFIX_ALIAS + "JohnnyV " + PREFIX_NEW_ALIAS + "JohnnyValorant\n"
             + "Example 2: " + COMMAND_WORD + " " + PREFIX_NAME + "John "
-            + PREFIX_GAME + "Valorant " + PREFIX_ALIAS + "JohnnyV " + PREFIX_NEW_ALIAS + "JohnnyValorant";
+            + PREFIX_GAME + "Valorant " + PREFIX_ALIAS + "JohnnyV " + PREFIX_NEW_ALIAS + "JohnnyValorant\n"
+            + "Example 3: " + COMMAND_WORD + " me " + PREFIX_GAME + "Valorant "
+            + PREFIX_ALIAS + "JohnnyV " + PREFIX_NEW_ALIAS + "JohnnyValorant";
 
     public static final String MESSAGE_SUCCESS = "Alias \"%3$s\" updated to \"%4$s\" for %1$s in %2$s";
-    public static final String MESSAGE_PERSON_NOT_FOUND = "Error: Name not found";
+    public static final String MESSAGE_PERSON_NOT_FOUND = "Error: Contact not found in the current list."
+            + " Use 'list' to show all contacts.";
     public static final String MESSAGE_GAME_NOT_FOUND = "Error: Game not found";
     public static final String MESSAGE_ALIAS_NOT_FOUND = "Error: Alias not found";
     public static final String MESSAGE_DUPLICATE_ALIAS = "Error: This alias already exists for this game.";
@@ -89,7 +95,7 @@ public class EditAliasCommand extends Command implements UndoableCommand {
             List<Person> lastShownList = model.getFilteredPersonList();
             if (targetIndex != null) {
                 if (targetIndex.getZeroBased() >= lastShownList.size()) {
-                    throw new CommandException(Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX);
+                    throw new CommandException(Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX + "\n" + MESSAGE_USAGE);
                 }
                 personToEdit = lastShownList.get(targetIndex.getZeroBased());
             } else if (targetName != null) {

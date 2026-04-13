@@ -11,12 +11,6 @@
 
 --------------------------------------------------------------------------------------------------------------------
 
-## **Acknowledgements**
-
-_{ list here sources of all reused/adapted ideas, code, documentation, and third-party libraries -- include links to the original source as well }_
-
---------------------------------------------------------------------------------------------------------------------
-
 ## **Setting up, getting started**
 
 Refer to the guide [_Setting up and getting started_](SettingUp.md).
@@ -50,8 +44,7 @@ The bulk of the app's work is done by the following four components:
 
 **How the architecture components interact with each other**
 
-The *Sequence Diagram* below shows how the components interact with each other for the scenario where the user issues the command `delete 1`.
-
+The *Sequence Diagram* below shows how the components interact with each other for the scenario where the user issues the command `contact delete 1`.
 <puml src="diagrams/ArchitectureSequenceDiagram.puml" width="574" />
 
 Each of the four main components (also shown in the diagram above),
@@ -90,23 +83,25 @@ Here's a (partial) class diagram of the `Logic` component:
 
 <puml src="diagrams/LogicClassDiagram.puml" width="550"/>
 
-The sequence diagram below illustrates the interactions within the `Logic` component, taking `execute("delete 1")` API call as an example.
+The sequence diagram below illustrates the interactions within the `Logic` component, taking `execute("contact delete 1")` API call as an example.
 
-<puml src="diagrams/DeleteSequenceDiagram.puml" alt="Interactions Inside the Logic Component for the `delete 1` Command" />
+<puml src="diagrams/DeleteSequenceDiagram.puml" alt="Interactions Inside the Logic Component for the `contact delete 1` Command" />
 
 <box type="info" seamless>
 
-**Note:** The lifeline for `DeleteCommandParser` should end at the destroy marker (X) but due to a limitation of PlantUML, the lifeline continues till the end of diagram.
+**Note:** The lifeline for `DeleteContactCommandParser` should end at the destroy marker (X) but due to a limitation of PlantUML, the lifeline continues till the end of diagram.
 </box>
 
 How the `Logic` component works:
 
-1. When `Logic` is called upon to execute a command, it is passed to an `AddressBookParser` object which in turn creates a parser that matches the command (e.g., `DeleteCommandParser`) and uses it to parse the command.
-1. This results in a `Command` object (more precisely, an object of one of its subclasses e.g., `DeleteCommand`) which is executed by the `LogicManager`.
-1. The command can communicate with the `Model` when it is executed (e.g. to delete a person).<br>
-   Note that although this is shown as a single step in the diagram above (for simplicity), in the code it can take several interactions (between the command object and the `Model`) to achieve.
-1. The result of the command execution is encapsulated as a `CommandResult` object which is returned back from `Logic`.
-1. If the command implements the `UndoableCommand` interface, `LogicManager` pushes it onto the `commandHistory` stack so it can be reversed by a subsequent `undo` command.
+How the `Logic` component works:
+
+1. When `Logic` is called upon to execute a command, it is passed to an `AddressBookParser` object which in turn creates a parser that matches the command (e.g., `DeleteContactCommandParser`) and uses it to parse the command.
+2. This results in a `Command` object (more precisely, an object of one of its subclasses e.g., `DeleteContactCommand`) which is executed by the `LogicManager`.
+3. The command can communicate with the `Model` when it is executed (e.g. to delete a person).<br>
+   Note that although this is shown as a single step in the diagram above (for simplicity), in the code it can take several interactions (between the command object and the `Model`) to achieve. 
+4. The result of the command execution is encapsulated as a `CommandResult` object which is returned back from `Logic`. 
+5. If the command implements the `UndoableCommand` interface, `LogicManager` pushes it onto the `commandHistory` stack so it can be reversed by a subsequent `undo` command.
 
 Here are the other classes in `Logic` (omitted from the class diagram above) that are used for parsing a user command:
 
@@ -114,8 +109,7 @@ Here are the other classes in `Logic` (omitted from the class diagram above) tha
 
 How the parsing works:
 * When called upon to parse a user command, the `AddressBookParser` class creates an `XYZCommandParser` (`XYZ` is a placeholder for the specific command name e.g., `AddCommandParser`) which uses the other classes shown above to parse the user command and create a `XYZCommand` object (e.g., `AddCommand`) which the `AddressBookParser` returns back as a `Command` object.
-* All `XYZCommandParser` classes (e.g., `AddCommandParser`, `DeleteCommandParser`, ...) inherit from the `Parser` interface so that they can be treated similarly where possible e.g, during testing.
-
+* All `XYZCommandParser` classes (e.g., `AddCommandParser`, `DeleteContactCommandParser`, ...) inherit from the `Parser` interface so that they can be treated similarly where possible e.g., during testing.
 ### Model component
 **API** : [`Model.java`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/model/Model.java)
 
@@ -160,7 +154,7 @@ Classes used by multiple components are in the `seedu.address.commons` package.
 This section describes some noteworthy details on how certain features are implemented.
 
 ### Copy Command Feature
-The `copy` command allows users to quickly serialize a specific contact's complex profile (including their name, tags, games, and aliases) into a perfectly formatted, executable CLI string (e.g., `contact add n/John Doe t/friend...`) and saves it directly to their operating system's clipboard.
+The `copy` command allows users to quickly serialize a specific contact's complex profile (including their name, games, and aliases) into a perfectly formatted, executable CLI string (e.g., `contact add n/John Doe g/Valorant...`) and saves it directly to their operating system's clipboard.
 
 #### Architecture and Execution
 To avoid cluttering the main logic architecture diagram, the structural relationship of the `CopyCommand` is shown in the feature-specific class diagram below.
@@ -232,7 +226,7 @@ The `contact edit` command allows users to rename an existing contact while pres
    * If `targetIndex` is set, retrieves the person at that index from the filtered list.
    * If `targetName` is set, searches `model.getFilteredPersonList()` for a case-insensitive name match.
 2. If not found, a `CommandException` with `MESSAGE_PERSON_NOT_FOUND` is thrown.
-3. A new `Person` is created with `newName` and the original person's `tags`, `games`, and `isUserProfile` flag.
+3. A new `Person` is created with `newName` and the original person's `games`, and `isUserProfile` flag.
 4. If the new name already belongs to a different person, a `CommandException` with `MESSAGE_DUPLICATE_PERSON` is thrown.
 5. `model.setPerson()` replaces the old entry, and the filtered list is reset to show all persons.
 6. A `CommandResult` is returned, displaying the updated contact.
@@ -324,6 +318,36 @@ Redo is not implemented. Once a command is undone it is removed from the history
 
 --------------------------------------------------------------------------------------------------------------------
 
+### Delete Confirmation Feature
+The `contact delete`, `game delete`, and `alias delete` commands require a y/n confirmation from the user before deletion is applied, to prevent accidental data loss.
+
+#### Architecture and Execution
+The structural relationship of the delete commands is shown in the class diagram below.
+
+<puml src="diagrams/DeleteCommandClassDiagram.puml" alt="Delete Command Class Diagram" />
+
+All three delete commands implement `ConfirmableDeleteCommand`, which declares `performDeletion()` and `getCancelMessage()`. This gives `LogicManager` a single unified code path for all confirmation handling.
+
+The following sequence diagram illustrates the two-step flow for `contact delete n/Alice` followed by `y`:
+
+<puml src="diagrams/DeleteConfirmSequenceDiagram.puml" alt="Delete Confirmation Sequence Diagram" />
+
+Step-by-step execution:
+1. The user inputs `contact delete n/Alice`.
+2. `LogicManager` passes the input to `AddressBookParser`, which creates a `DeleteContactCommand`.
+3. `LogicManager` calls `DeleteContactCommand#execute(model)`, which finds the target but does **not** delete yet — returns a `CommandResult` with `isAwaitingConfirmation = true`.
+4. `LogicManager` stores the command in `pendingConfirmableCommand` and shows the confirmation prompt.
+5. The user inputs `y` — `LogicManager#handleDeleteConfirmation()` calls `performDeletion()` on the command, conditionally pushes it to `commandHistory` if it implements `UndoableCommand`, and saves the address book.
+6. If the user inputs `n` or any other input, `getCancelMessage()` is returned and the model is unchanged.
+
+#### Design Considerations:
+* **`ConfirmableDeleteCommand` is decoupled from `UndoableCommand`** — allows future commands to require confirmation without needing to support undo. All three current delete commands implement both interfaces explicitly.
+* **Alternative:** Have `LogicManager` perform the deletion directly (e.g. `model.deletePerson()`) after confirmation, without a `performDeletion()` method on the command.
+    * **Pros:** Simpler — no extra interface or method needed.
+    * **Cons:** `LogicManager` must know the internals of each delete command (e.g. which game or alias to remove), violating separation of concerns and requiring `instanceof` checks for each command type.
+
+--------------------------------------------------------------------------------------------------------------------
+
 ## **Documentation, logging, testing, configuration, dev-ops**
 
 * [Documentation guide](Documentation.md)
@@ -365,8 +389,6 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 | `* *`    | user       | add a game that the contact plays  | keep track of which games the contact plays                  |
 | `* *`    | user       | delete a game that a contact plays | remove games that the contact no longer plays                |
 | `*`      | new user   | see usage instructions             | refer to command syntax when I forget how to use the app     | \
-
-*{More to be added}*
 
 ### Use cases
 
@@ -527,14 +549,10 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
    Use case ends.
 
-*{More to be added}*
-
 ### Non-Functional Requirements
 
 1.   Initial startup should take no longer than 2s.
 2.   A user with above average typing speed for regular English text (i.e. not code, not system admin commands) should be able to accomplish most of the tasks faster using commands than using the mouse.
-
-*{More to be added}*
 
 ### Glossary
 
@@ -559,16 +577,14 @@ testers are expected to do more *exploratory* testing.
 
    1. Download the jar file and copy into an empty folder
 
-   1. Double-click the jar file Expected: Shows the GUI with a set of sample contacts. The window size may not be optimum.
+   2. Double-click the jar file Expected: Shows the GUI with a placeholder User Profile. The window size may not be optimum.
 
-1. Saving window preferences
+2. Saving window preferences
 
    1. Resize the window to an optimum size. Move the window to a different location. Close the window.
 
-   1. Re-launch the app by double-clicking the jar file.<br>
+   2. Re-launch the app by double-clicking the jar file.<br>
        Expected: The most recent window size and location is retained.
-
-1. _{ more test cases …​ }_
 
 ### Deleting a person
 
@@ -576,16 +592,15 @@ testers are expected to do more *exploratory* testing.
 
    1. Prerequisites: List all persons using the `list` command. Multiple persons in the list.
 
-   1. Test case: `delete 1`<br>
+   2. Test case: `contact delete 1`<br>
       Expected: First contact is deleted from the list. Details of the deleted contact shown in the status message. Timestamp in the status bar is updated.
 
-   1. Test case: `delete 0`<br>
+   3. Test case: `contact delete 0`<br>
       Expected: No person is deleted. Error details shown in the status message. Status bar remains the same.
 
-   1. Other incorrect delete commands to try: `delete`, `delete x`, `...` (where x is larger than the list size)<br>
+   4. Other incorrect delete commands to try: `contact delete`, `contact delete x`, `...` (where x is larger than the list size)<br>
       Expected: Similar to previous.
 
-1. _{ more test cases …​ }_
 
 ### Editing a contact's name
 
@@ -593,31 +608,23 @@ testers are expected to do more *exploratory* testing.
 
    1. Prerequisites: List all persons using the `list` command. At least one contact in the list (e.g. `Alex Yeoh` at index 1).
 
-   1. Test case: `contact edit n/Alex Yeoh e/Alex`<br>
+   2. Test case: `contact edit n/Alex Yeoh e/Alex`<br>
       Expected: Contact is renamed. Success message `Contact updated: Alex Yeoh → Alex` shown.
 
-   1. Test case: `contact edit 1 e/Alex`<br>
+   3. Test case: `contact edit 1 e/Alex`<br>
       Expected: First contact is renamed. Success message `Contact updated: [original name] → Alex` shown.
 
-   1. Test case: `contact edit n/NonExistent e/NewName`<br>
+   4. Test case: `contact edit n/NonExistent e/NewName`<br>
       Expected: No contact is renamed. Error message `Error: Name not found` shown.
 
-   1. Test case: `contact edit 999 e/NewName` (index out of bounds)<br>
+   5. Test case: `contact edit 999 e/NewName` (index out of bounds)<br>
       Expected: No contact is renamed. Invalid index error shown.
 
-   1. Test case: `contact edit 1 n/Alex Yeoh e/NewName` (both index and name provided)<br>
+   6. Test case: `contact edit 1 n/Alex Yeoh e/NewName` (both index and name provided)<br>
       Expected: No contact is renamed. Error message `Please provide either an index OR a name, not both.` shown.
 
-   1. Test case: `contact edit n/Alex Yeoh e/Bernice Yu` (where `Bernice Yu` already exists)<br>
+   7. Test case: `contact edit n/Alex Yeoh e/Bernice Yu` (where `Bernice Yu` already exists)<br>
       Expected: No contact is renamed. Error message `Error: A contact with that name already exists` shown.
 
-   1. Test case: `contact edit n/Alex Yeoh` (missing `e/` prefix)<br>
+   8. Test case: `contact edit n/Alex Yeoh` (missing `e/` prefix)<br>
       Expected: No contact is renamed. Invalid command format error shown.
-
-### Saving data
-
-1. Dealing with missing/corrupted data files
-
-   1. _{explain how to simulate a missing/corrupted file, and the expected behavior}_
-
-1. _{ more test cases …​ }_

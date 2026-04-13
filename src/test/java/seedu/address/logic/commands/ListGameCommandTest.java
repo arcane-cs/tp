@@ -89,7 +89,8 @@ public class ListGameCommandTest {
         ListGameCommand listGameCommand = new ListGameCommand(outOfBoundIndex, null, false);
 
         assertCommandFailure(listGameCommand, model,
-                seedu.address.logic.Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX);
+                seedu.address.logic.Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX
+                        + "\n" + ListGameCommand.MESSAGE_USAGE);
     }
 
     @Test
@@ -107,13 +108,6 @@ public class ListGameCommandTest {
 
         CommandResult result = listGameCommand.execute(profileModel);
         assertEquals(expectedMessage, result.getFeedbackToUser());
-    }
-
-    @Test
-    public void execute_noProfile_failure() {
-        Model emptyModel = new ModelManager(new AddressBook(), new UserPrefs());
-        ListGameCommand listGameCommand = new ListGameCommand(null, null, true);
-        assertCommandFailure(listGameCommand, emptyModel, "No user profile found.");
     }
 
     @Test

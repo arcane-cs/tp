@@ -3,8 +3,9 @@ package seedu.address.logic.parser;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_ALIAS;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_GAME;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 
-import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
@@ -28,16 +29,21 @@ public class FindCommandParser implements Parser<FindCommand> {
      * @throws ParseException if the user input does not conform the expected format
      */
     public FindCommand parse(String args) throws ParseException {
-        ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(" " + args, PREFIX_GAME, PREFIX_ALIAS);
+        ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(" " + args, PREFIX_NAME, PREFIX_GAME, PREFIX_ALIAS);
 
-        String preamble = argMultimap.getPreamble().trim();
+        argMultimap.verifyNoDuplicatePrefixesFor(PREFIX_NAME, PREFIX_GAME, PREFIX_ALIAS);
+
+        Optional<String> nameValue = argMultimap.getValue(PREFIX_NAME);
         Optional<String> gameValue = argMultimap.getValue(PREFIX_GAME);
         Optional<String> aliasValue = argMultimap.getValue(PREFIX_ALIAS);
 
-        boolean hasName = !preamble.isEmpty();
+        boolean hasName = nameValue.isPresent() && !nameValue.get().trim().isEmpty();
         boolean hasGame = gameValue.isPresent() && !gameValue.get().isEmpty();
         boolean hasAlias = aliasValue.isPresent() && !aliasValue.get().isEmpty();
 
+        if (nameValue.isPresent() && !hasName) {
+            throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, FindCommand.MESSAGE_USAGE));
+        }
         if (gameValue.isPresent() && !hasGame) {
             throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, FindCommand.MESSAGE_USAGE));
         }
@@ -50,8 +56,7 @@ public class FindCommandParser implements Parser<FindCommand> {
 
         // Single constraint — return specific predicate type for clean equality semantics
         if (hasName && !hasGame && !hasAlias) {
-            String[] nameKeywords = preamble.split("\\s+");
-            return new FindCommand(new NameContainsKeywordsPredicate(Arrays.asList(nameKeywords)));
+            return new FindCommand(new NameContainsKeywordsPredicate(List.of(nameValue.get().trim())));
         }
         if (!hasName && hasGame && !hasAlias) {
             return new FindCommand(new GameContainsKeywordPredicate(gameValue.get()));
@@ -63,8 +68,7 @@ public class FindCommandParser implements Parser<FindCommand> {
         // Multiple constraints — AND all predicates together
         Predicate<Person> combined = person -> true;
         if (hasName) {
-            String[] nameKeywords = preamble.split("\\s+");
-            combined = combined.and(new NameContainsKeywordsPredicate(Arrays.asList(nameKeywords)));
+            combined = combined.and(new NameContainsKeywordsPredicate(List.of(nameValue.get().trim())));
         }
         if (hasGame) {
             combined = combined.and(new GameContainsKeywordPredicate(gameValue.get()));

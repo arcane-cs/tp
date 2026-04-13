@@ -22,7 +22,7 @@ note right : Finds person,\ndoes NOT delete yet
 DeleteCommand --> LogicManager : CommandResult\n(isAwaitingConfirmation=true)
 deactivate DeleteCommand
 
-note over LogicManager : Stores pending person and command,\nshows confirmation prompt to user
+note over LogicManager : Stores command in\npendingConfirmableCommand
 
 [<-- LogicManager : "Are you sure? (y/n)"
 deactivate LogicManager
@@ -32,12 +32,16 @@ deactivate LogicManager
 [-> LogicManager : execute("y")
 activate LogicManager
 
-LogicManager -> Model : delete person
+LogicManager -> DeleteCommand : performDeletion(m)
+activate DeleteCommand
+DeleteCommand -> Model : delete person
 activate Model
-Model --> LogicManager
+Model --> DeleteCommand
 deactivate Model
+DeleteCommand --> LogicManager : CommandResult (success)
+deactivate DeleteCommand
 
-note over LogicManager : Pushes command to\ncommandHistory for undo
+note over LogicManager : If command implements UndoableCommand,\npush to commandHistory
 
 [<-- LogicManager : "Contact deleted: Alice"
 deactivate LogicManager

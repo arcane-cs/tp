@@ -35,6 +35,9 @@ public class ModelManager implements Model {
         this.addressBook = new AddressBook(addressBook);
         this.userPrefs = new UserPrefs(userPrefs);
         filteredPersons = new FilteredList<>(this.addressBook.getPersonList());
+        if (filteredPersons.isEmpty() || !filteredPersons.get(0).isUserProfile()) {
+            addUserProfile();
+        }
     }
 
     public ModelManager() {
@@ -97,6 +100,9 @@ public class ModelManager implements Model {
     @Override
     public void deletePerson(Person target) {
         addressBook.removePerson(target);
+        if (target.isUserProfile()) {
+            addUserProfile();
+        }
     }
 
     @Override
@@ -119,6 +125,13 @@ public class ModelManager implements Model {
         return addressBook.getPersonList().stream()
                 .filter(Person::isUserProfile)
                 .findFirst();
+    }
+
+    @Override
+    public void addUserProfile() {
+        if (getUserProfile().isEmpty()) {
+            addressBook.addUserProfile();
+        }
     }
 
     //=========== Filtered Person List Accessors =============================================================

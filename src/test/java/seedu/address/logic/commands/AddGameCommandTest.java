@@ -138,7 +138,8 @@ public class AddGameCommandTest {
 
         assertCommandFailure(addGameCommand,
                 model,
-                seedu.address.logic.Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX);
+                seedu.address.logic.Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX
+                        + "\n" + AddGameCommand.MESSAGE_USAGE);
     }
 
     @Test
@@ -157,14 +158,6 @@ public class AddGameCommandTest {
         org.junit.jupiter.api.Assertions.assertTrue(profileModel.getUserProfile().isPresent());
         org.junit.jupiter.api.Assertions.assertTrue(
                 profileModel.getUserProfile().get().getGames().contains(gameToAdd));
-    }
-
-    @Test
-    public void execute_noProfile_failure() {
-        Model emptyModel = new ModelManager(new AddressBook(), new UserPrefs());
-        Game gameToAdd = new Game("Minecraft");
-        AddGameCommand addGameCommand = new AddGameCommand(null, null, gameToAdd, true);
-        assertCommandFailure(addGameCommand, emptyModel, "No user profile found.");
     }
 
     @Test

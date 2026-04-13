@@ -24,25 +24,33 @@ import seedu.address.model.person.Person;
 /**
  * Deletes an alias from an existing person in Harmony.
  */
-public class DeleteAliasCommand extends Command implements UndoableCommand {
+public class DeleteAliasCommand extends Command implements ConfirmableDeleteCommand, UndoableCommand {
 
     public static final String COMMAND_WORD = "alias delete";
 
     public static final String MESSAGE_USAGE = COMMAND_WORD
-            + ": Deletes an alias from a game of a contact using either their index OR their full name.\n"
+            + ": Deletes an alias from a game of a contact using either their index, full name,"
+            + " or 'me' for your own profile.\n"
             + "Parameters (by Index): INDEX (must be a positive integer) "
             + PREFIX_GAME + "GAME " + PREFIX_ALIAS + "ALIAS\n"
             + "Parameters (by Name): "
             + PREFIX_NAME + "CONTACT_NAME " + PREFIX_GAME + "GAME " + PREFIX_ALIAS + "ALIAS\n"
+            + "Parameters (User Profile): me " + PREFIX_GAME + "GAME " + PREFIX_ALIAS + "ALIAS\n"
             + "Example 1: " + COMMAND_WORD + " 1 " + PREFIX_GAME + "Valorant "
             + PREFIX_ALIAS + "Benjumpin\n"
             + "Example 2: " + COMMAND_WORD + " " + PREFIX_NAME + "Benjamin "
-            + PREFIX_GAME + "Valorant " + PREFIX_ALIAS + "Benjumpin";
+            + PREFIX_GAME + "Valorant " + PREFIX_ALIAS + "Benjumpin\n"
+            + "Example 3: " + COMMAND_WORD + " me " + PREFIX_GAME + "Valorant " + PREFIX_ALIAS + "Benjumpin";
 
     public static final String MESSAGE_SUCCESS = "Alias \"%3$s\" removed from %1$s in %2$s";
-    public static final String MESSAGE_PERSON_NOT_FOUND = "Error: Name does not exist";
+    public static final String MESSAGE_PERSON_NOT_FOUND = "Error: Contact not found in the current list."
+            + " Use 'list' to show all contacts.";
     public static final String MESSAGE_ALIAS_NOT_FOUND = "Error: Alias does not exist for this contact";
     public static final String MESSAGE_GAME_NOT_FOUND = "Error: Game does not exist for this contact";
+    public static final String MESSAGE_DELETE_CONFIRMATION =
+            "Are you sure you want to delete alias \"%3$s\" from %1$s in %2$s? (y/n)";
+    public static final String MESSAGE_DELETE_CANCELLED =
+            "Deletion of alias \"%3$s\" from %1$s in %2$s cancelled.";
 
     private final Index targetIndex;
     private final Name targetName;
@@ -77,7 +85,7 @@ public class DeleteAliasCommand extends Command implements UndoableCommand {
             List<Person> lastShownList = model.getFilteredPersonList();
             if (targetIndex != null) {
                 if (targetIndex.getZeroBased() >= lastShownList.size()) {
-                    throw new CommandException(Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX);
+                    throw new CommandException(Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX + "\n" + MESSAGE_USAGE);
                 }
                 personToEdit = lastShownList.get(targetIndex.getZeroBased());
             } else if (targetName != null) {
@@ -120,16 +128,26 @@ public class DeleteAliasCommand extends Command implements UndoableCommand {
 
         personBeforeEdit = personToEdit;
         personAfterEdit = editedPerson;
-        model.setPerson(personToEdit, editedPerson);
 
-        return new CommandResult(String.format(
-                MESSAGE_SUCCESS,
-                editedPerson.getName(),
-                updatedGame.gameName,
-                aliasToDelete),
-                false,
-                false,
-                editedPerson);
+        String confirmationMessage = String.format(MESSAGE_DELETE_CONFIRMATION,
+                personToEdit.getName(), targetGame.gameName, aliasToDelete);
+        return new CommandResult(confirmationMessage, personToEdit);
+    }
+
+    @Override
+    public String getCancelMessage() {
+        return String.format(MESSAGE_DELETE_CANCELLED,
+                personBeforeEdit.getName(), targetGame.gameName, aliasToDelete);
+    }
+
+    /**
+     * Performs the actual alias deletion after confirmation.
+     */
+    public CommandResult performDeletion(Model model) {
+        model.setPerson(personBeforeEdit, personAfterEdit);
+        return new CommandResult(String.format(MESSAGE_SUCCESS,
+                personAfterEdit.getName(), targetGame.gameName, aliasToDelete),
+                false, false, personAfterEdit);
     }
 
     @Override

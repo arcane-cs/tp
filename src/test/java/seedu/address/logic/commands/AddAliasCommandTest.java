@@ -189,7 +189,8 @@ public class AddAliasCommandTest {
 
         assertCommandFailure(addAliasCommand,
                 model,
-                seedu.address.logic.Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX);
+                seedu.address.logic.Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX
+                        + "\n" + AddAliasCommand.MESSAGE_USAGE);
     }
 
     @Test
@@ -211,16 +212,6 @@ public class AddAliasCommandTest {
         assertTrue(profileModel.getUserProfile().isPresent());
         assertEquals(profileModel.getUserProfile().get(), result.getViewedPerson());
         assertTrue(profileModel.getUserProfile().get().getGames().iterator().next().getAliases().contains(alias));
-    }
-
-    @Test
-    public void execute_noProfile_failure() {
-        Model emptyModel = new ModelManager(new AddressBook(), new UserPrefs());
-        Game game = new Game("Valorant");
-        Alias alias = new Alias("JohnV");
-
-        AddAliasCommand addAliasCommand = new AddAliasCommand(null, null, game, alias, true);
-        assertCommandFailure(addAliasCommand, emptyModel, "No user profile found.");
     }
 
     @Test

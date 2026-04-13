@@ -20,19 +20,25 @@ import seedu.address.model.person.Person;
 /**
  * Deletes a game from an existing contact in the address book.
  */
-public class DeleteGameCommand extends Command implements UndoableCommand {
+public class DeleteGameCommand extends Command implements ConfirmableDeleteCommand, UndoableCommand {
 
     public static final String COMMAND_WORD = "delete";
     public static final String MESSAGE_USAGE = "game " + COMMAND_WORD
-            + ": Deletes a game from a contact using either their index OR their full name.\n"
+            + ": Deletes a game from a contact using either their index, full name, or 'me' for your own profile.\n"
             + "Parameters (by Index): INDEX (must be a positive integer) " + PREFIX_GAME + "GAME_NAME\n"
             + "Parameters (by Name): " + PREFIX_NAME + "CONTACT_NAME " + PREFIX_GAME + "GAME_NAME\n"
+            + "Parameters (User Profile): me " + PREFIX_GAME + "GAME_NAME\n"
             + "Example 1: game " + COMMAND_WORD + " 1 " + PREFIX_GAME + "Minecraft\n"
-            + "Example 2: game " + COMMAND_WORD + " " + PREFIX_NAME + "Zi Xuan " + PREFIX_GAME + "Minecraft";
+            + "Example 2: game " + COMMAND_WORD + " " + PREFIX_NAME + "Zi Xuan " + PREFIX_GAME + "Minecraft\n"
+            + "Example 3: game " + COMMAND_WORD + " me " + PREFIX_GAME + "Minecraft";
 
-    public static final String MESSAGE_SUCCESS = "Game %1$s removed from %2$s";
-    public static final String MESSAGE_CONTACT_NOT_FOUND = "Error: Contact does not exist.";
+    public static final String MESSAGE_SUCCESS = "Game \"%1$s\" removed from %2$s";
+    public static final String MESSAGE_CONTACT_NOT_FOUND = "Error: Contact not found in the current list."
+            + " Use 'list' to show all contacts.";
     public static final String MESSAGE_GAME_NOT_FOUND = "Error: This contact does not have this game.";
+    public static final String MESSAGE_DELETE_CONFIRMATION =
+            "Are you sure you want to delete game \"%1$s\" from %2$s? (y/n)";
+    public static final String MESSAGE_DELETE_CANCELLED = "Deletion of game \"%1$s\" from %2$s cancelled.";
 
     private final Index targetIndex;
     private final Name targetName;
@@ -67,7 +73,7 @@ public class DeleteGameCommand extends Command implements UndoableCommand {
             List<Person> lastShownList = model.getFilteredPersonList();
             if (targetIndex != null) {
                 if (targetIndex.getZeroBased() >= lastShownList.size()) {
-                    throw new CommandException(Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX);
+                    throw new CommandException(Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX + "\n" + MESSAGE_USAGE);
                 }
                 personToEdit = lastShownList.get(targetIndex.getZeroBased());
             } else if (targetName != null) {
@@ -99,15 +105,26 @@ public class DeleteGameCommand extends Command implements UndoableCommand {
 
         personBeforeEdit = personToEdit;
         personAfterEdit = editedPerson;
-        model.setPerson(personToEdit, editedPerson);
-        model.updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
 
+        String confirmationMessage = String.format(MESSAGE_DELETE_CONFIRMATION,
+                gameToDelete.gameName, personToEdit.getName().fullName);
+        return new CommandResult(confirmationMessage, personToEdit);
+    }
+
+    @Override
+    public String getCancelMessage() {
+        return String.format(MESSAGE_DELETE_CANCELLED, gameToDelete.gameName, personBeforeEdit.getName());
+    }
+
+    /**
+     * Performs the actual game deletion after confirmation.
+     */
+    public CommandResult performDeletion(Model model) {
+        model.setPerson(personBeforeEdit, personAfterEdit);
+        model.updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
         return new CommandResult(String.format(MESSAGE_SUCCESS,
-                gameToDelete.gameName,
-                editedPerson.getName().fullName),
-                false,
-                false,
-                editedPerson);
+                gameToDelete.gameName, personAfterEdit.getName().fullName),
+                false, false, personAfterEdit);
     }
 
     @Override

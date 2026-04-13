@@ -70,7 +70,9 @@ public class EditContactCommandTest {
     public void execute_invalidIndex_throwsCommandException() {
         Index outOfBoundIndex = Index.fromZeroBased(model.getFilteredPersonList().size() + 1);
         EditContactCommand command = new EditContactCommand(outOfBoundIndex, null, new Name("Ben"), false);
-        assertCommandFailure(command, model, seedu.address.logic.Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX);
+        assertCommandFailure(command, model,
+                seedu.address.logic.Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX
+                        + "\n" + EditContactCommand.MESSAGE_USAGE);
     }
 
     @Test
@@ -108,13 +110,6 @@ public class EditContactCommandTest {
 
         assertEquals(String.format(EditContactCommand.MESSAGE_EDIT_PERSON_SUCCESS, "John Doe", newName),
                 result.getFeedbackToUser());
-    }
-
-    @Test
-    public void execute_noUserProfile_throwsCommandException() {
-        Model emptyModel = new ModelManager(new AddressBook(), new UserPrefs());
-        EditContactCommand command = new EditContactCommand(null, null, new Name("Johnny"), true);
-        assertCommandFailure(command, emptyModel, "No user profile found.");
     }
 
     @Test

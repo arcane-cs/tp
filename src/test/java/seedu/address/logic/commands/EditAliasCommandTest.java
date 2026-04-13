@@ -156,7 +156,8 @@ public class EditAliasCommandTest {
         EditAliasCommand editAliasCommand =
                 new EditAliasCommand(outOfBoundIndex, null, game, oldAlias, newAlias, false);
         assertCommandFailure(editAliasCommand, model,
-                seedu.address.logic.Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX);
+                seedu.address.logic.Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX
+                        + "\n" + EditAliasCommand.MESSAGE_USAGE);
     }
 
     @Test
@@ -192,18 +193,6 @@ public class EditAliasCommandTest {
         CommandResult result = editAliasCommand.execute(profileModel);
         assertEquals(expectedMessage, result.getFeedbackToUser());
         assertEquals(profileModel.getUserProfile().get(), result.getViewedPerson());
-    }
-
-    @Test
-    public void execute_noProfile_failure() {
-        Model emptyModel = new ModelManager(new AddressBook(), new UserPrefs());
-        Game game = new Game("Valorant");
-        Alias oldAlias = new Alias("JohnnyV");
-        Alias newAlias = new Alias("JohnnyValorant");
-
-        EditAliasCommand editAliasCommand =
-                new EditAliasCommand(null, null, game, oldAlias, newAlias, true);
-        assertCommandFailure(editAliasCommand, emptyModel, "No user profile found.");
     }
 
     @Test
