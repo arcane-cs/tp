@@ -291,6 +291,12 @@ Format: `exit`
 
 ## Contact Management
 
+<box type="info" seamless>
+
+For commands that specific contact by name, `NAME` must match the contact's full name exactly (case-insensitive).
+
+</box>
+
 ### Adding a contact: `contact add`
 
 Adds a contact to Harmony.
@@ -321,7 +327,6 @@ Format:
 * By name: `view n/NAME`
 * User Profile: `view me`
 
-* `NAME` must match the contact's full name exactly (case-insensitive).
 * Use the exact keyword `me` to view your own user profile.
 * `contact view` also works as an alternative form.
 
@@ -429,6 +434,12 @@ Examples:
 
 ## Game Management
 
+<box type="info" seamless>
+
+For commands that target a specific contact by name, `CONTACT_NAME` must match the contact's full name exactly (case-insensitive).
+
+</box>
+
 ### Adding a game to a contact: `game add`
 
 Adds a game to an existing contact or your user profile.
@@ -438,7 +449,6 @@ Format:
 * By name: `game add n/CONTACT_NAME g/GAME_NAME`
 * User Profile: `game add me g/GAME_NAME`
 
-* `CONTACT_NAME` must match the contact's full name exactly (case-insensitive).
 * The game cannot already exist for that contact.
 
 Examples:
@@ -455,7 +465,6 @@ Format:
 * By name: `game delete n/CONTACT_NAME g/GAME_NAME`
 * User Profile: `game delete me g/GAME_NAME`
 
-* `CONTACT_NAME` must match the contact's full name exactly (case-insensitive).
 * The game must exist for that contact.
 * A confirmation prompt will appear. Type `y` or `yes` to confirm, or `n` or `no` to cancel.
 * Any other input cancels the deletion.
@@ -474,8 +483,6 @@ Format:
 * By name: `game list n/CONTACT_NAME`
 * User Profile: `game list me`
 
-* `CONTACT_NAME` must match the contact's full name exactly (case-insensitive).
-
 Examples:
 * `game list 1`
 * `game list n/John Doe`
@@ -487,7 +494,8 @@ Examples:
 
 <box type="info" seamless>
 
-**Note:** Alias commands require the contact to already have the specified game. Use `game add` first if needed.
+* `CONTACT_NAME` must match the contact's full name exactly (case-insensitive).
+* All alias commands require the contact to already have the specified game. Use `game add` first if needed.
 
 </box>
 
@@ -500,8 +508,6 @@ Format:
 * By name: `alias add n/CONTACT_NAME g/GAME_NAME al/ALIAS`
 * User Profile: `alias add me g/GAME_NAME al/ALIAS`
 
-* `CONTACT_NAME` must match the contact's full name exactly (case-insensitive).
-* The contact must already have the specified game.
 * The alias cannot already exist for that game.
 
 Examples:
@@ -518,8 +524,6 @@ Format:
 * By name: `alias edit n/CONTACT_NAME g/GAME_NAME al/OLD_ALIAS na/NEW_ALIAS`
 * User Profile: `alias edit me g/GAME_NAME al/OLD_ALIAS na/NEW_ALIAS`
 
-* `CONTACT_NAME` must match the contact's full name exactly (case-insensitive).
-* The contact must already have the specified game.
 * `OLD_ALIAS` must already exist for that game.
 * `NEW_ALIAS` must not already exist for that game.
 
@@ -537,8 +541,6 @@ Format:
 * By name: `alias delete n/CONTACT_NAME g/GAME_NAME al/ALIAS`
 * User Profile: `alias delete me g/GAME_NAME al/ALIAS`
 
-* `CONTACT_NAME` must match the contact's full name exactly (case-insensitive).
-* The contact must already have the specified game.
 * The alias must exist for that game.
 * A confirmation prompt will appear. Type `y` or `yes` to confirm, or `n` or `no` to cancel.
 * Any other input cancels the deletion.
@@ -554,7 +556,19 @@ Examples:
 
 ### Saving the data
 
-Harmony data is saved in the hard disk automatically after any command that changes the data. There is no need to save manually.
+Harmony data is saved to your computer automatically after any command that changes data. There is no need to save manually.
+
+<box type="info" seamless>
+
+Data is saved to `[JAR file location]/data/addressbook.json`.
+
+</box>
+
+<box type="tip" seamless>
+
+It is recommended to regularly back up your `addressbook.json` file to a secure location.
+
+</box>
 
 ### Editing the data file
 
@@ -564,7 +578,7 @@ Harmony data is saved automatically as a JSON file `[JAR file location]/data/add
 
 **Caution:**
 If your changes to the data file makes its format invalid, Harmony will discard all data and start with an empty data file at the next run. Hence, it is recommended to take a backup of the file before editing it.<br>
-Furthermore, certain edits can cause Harmony to behave in unexpected ways (e.g., if a value entered is outside the acceptable range). Therefore, edit the data file only if you are confident that you can update it correctly.
+Furthermore, certain edits can cause Harmony to behave in unexpected ways (e.g., if a value entered is outside the acceptable range). Edit the data file only if you are confident that you can update it correctly.
 </box>
 
 --------------------------------------------------------------------------------------------------------------------
