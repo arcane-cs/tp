@@ -44,8 +44,7 @@ The bulk of the app's work is done by the following four components:
 
 **How the architecture components interact with each other**
 
-The *Sequence Diagram* below shows how the components interact with each other for the scenario where the user issues the command `delete 1`.
-
+The *Sequence Diagram* below shows how the components interact with each other for the scenario where the user issues the command `contact delete 1`.
 <puml src="diagrams/ArchitectureSequenceDiagram.puml" width="574" />
 
 Each of the four main components (also shown in the diagram above),
@@ -84,23 +83,25 @@ Here's a (partial) class diagram of the `Logic` component:
 
 <puml src="diagrams/LogicClassDiagram.puml" width="550"/>
 
-The sequence diagram below illustrates the interactions within the `Logic` component, taking `execute("delete 1")` API call as an example.
+The sequence diagram below illustrates the interactions within the `Logic` component, taking `execute("contact delete 1")` API call as an example.
 
-<puml src="diagrams/DeleteSequenceDiagram.puml" alt="Interactions Inside the Logic Component for the `delete 1` Command" />
+<puml src="diagrams/DeleteSequenceDiagram.puml" alt="Interactions Inside the Logic Component for the `contact delete 1` Command" />
 
 <box type="info" seamless>
 
-**Note:** The lifeline for `DeleteCommandParser` should end at the destroy marker (X) but due to a limitation of PlantUML, the lifeline continues till the end of diagram.
+**Note:** The lifeline for `DeleteContactCommandParser` should end at the destroy marker (X) but due to a limitation of PlantUML, the lifeline continues till the end of diagram.
 </box>
 
 How the `Logic` component works:
 
-1. When `Logic` is called upon to execute a command, it is passed to an `AddressBookParser` object which in turn creates a parser that matches the command (e.g., `DeleteCommandParser`) and uses it to parse the command.
-1. This results in a `Command` object (more precisely, an object of one of its subclasses e.g., `DeleteCommand`) which is executed by the `LogicManager`.
-1. The command can communicate with the `Model` when it is executed (e.g. to delete a person).<br>
-   Note that although this is shown as a single step in the diagram above (for simplicity), in the code it can take several interactions (between the command object and the `Model`) to achieve.
-1. The result of the command execution is encapsulated as a `CommandResult` object which is returned back from `Logic`.
-1. If the command implements the `UndoableCommand` interface, `LogicManager` pushes it onto the `commandHistory` stack so it can be reversed by a subsequent `undo` command.
+How the `Logic` component works:
+
+1. When `Logic` is called upon to execute a command, it is passed to an `AddressBookParser` object which in turn creates a parser that matches the command (e.g., `DeleteContactCommandParser`) and uses it to parse the command.
+2. This results in a `Command` object (more precisely, an object of one of its subclasses e.g., `DeleteContactCommand`) which is executed by the `LogicManager`.
+3. The command can communicate with the `Model` when it is executed (e.g. to delete a person).<br>
+   Note that although this is shown as a single step in the diagram above (for simplicity), in the code it can take several interactions (between the command object and the `Model`) to achieve. 
+4. The result of the command execution is encapsulated as a `CommandResult` object which is returned back from `Logic`. 
+5. If the command implements the `UndoableCommand` interface, `LogicManager` pushes it onto the `commandHistory` stack so it can be reversed by a subsequent `undo` command.
 
 Here are the other classes in `Logic` (omitted from the class diagram above) that are used for parsing a user command:
 
@@ -108,8 +109,7 @@ Here are the other classes in `Logic` (omitted from the class diagram above) tha
 
 How the parsing works:
 * When called upon to parse a user command, the `AddressBookParser` class creates an `XYZCommandParser` (`XYZ` is a placeholder for the specific command name e.g., `AddCommandParser`) which uses the other classes shown above to parse the user command and create a `XYZCommand` object (e.g., `AddCommand`) which the `AddressBookParser` returns back as a `Command` object.
-* All `XYZCommandParser` classes (e.g., `AddCommandParser`, `DeleteCommandParser`, ...) inherit from the `Parser` interface so that they can be treated similarly where possible e.g, during testing.
-
+* All `XYZCommandParser` classes (e.g., `AddCommandParser`, `DeleteContactCommandParser`, ...) inherit from the `Parser` interface so that they can be treated similarly where possible e.g., during testing.
 ### Model component
 **API** : [`Model.java`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/model/Model.java)
 
@@ -154,7 +154,7 @@ Classes used by multiple components are in the `seedu.address.commons` package.
 This section describes some noteworthy details on how certain features are implemented.
 
 ### Copy Command Feature
-The `copy` command allows users to quickly serialize a specific contact's complex profile (including their name, tags, games, and aliases) into a perfectly formatted, executable CLI string (e.g., `contact add n/John Doe t/friend...`) and saves it directly to their operating system's clipboard.
+The `copy` command allows users to quickly serialize a specific contact's complex profile (including their name, games, and aliases) into a perfectly formatted, executable CLI string (e.g., `contact add n/John Doe g/Valorant...`) and saves it directly to their operating system's clipboard.
 
 #### Architecture and Execution
 To avoid cluttering the main logic architecture diagram, the structural relationship of the `CopyCommand` is shown in the feature-specific class diagram below.
@@ -226,7 +226,7 @@ The `contact edit` command allows users to rename an existing contact while pres
    * If `targetIndex` is set, retrieves the person at that index from the filtered list.
    * If `targetName` is set, searches `model.getFilteredPersonList()` for a case-insensitive name match.
 2. If not found, a `CommandException` with `MESSAGE_PERSON_NOT_FOUND` is thrown.
-3. A new `Person` is created with `newName` and the original person's `tags`, `games`, and `isUserProfile` flag.
+3. A new `Person` is created with `newName` and the original person's `games`, and `isUserProfile` flag.
 4. If the new name already belongs to a different person, a `CommandException` with `MESSAGE_DUPLICATE_PERSON` is thrown.
 5. `model.setPerson()` replaces the old entry, and the filtered list is reset to show all persons.
 6. A `CommandResult` is returned, displaying the updated contact.
@@ -577,7 +577,7 @@ testers are expected to do more *exploratory* testing.
 
    1. Download the jar file and copy into an empty folder
 
-   2. Double-click the jar file Expected: Shows the GUI with a set of sample contacts. The window size may not be optimum.
+   2. Double-click the jar file Expected: Shows the GUI with a placeholder User Profile. The window size may not be optimum.
 
 2. Saving window preferences
 
