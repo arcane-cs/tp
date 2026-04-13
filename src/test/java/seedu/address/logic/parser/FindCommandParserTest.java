@@ -4,7 +4,7 @@ import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
 
-import java.util.Arrays;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
@@ -25,11 +25,23 @@ public class FindCommandParserTest {
     @Test
     public void parse_validNameArgs_returnsFindCommand() {
         FindCommand expectedFindCommand =
-                new FindCommand(new NameContainsKeywordsPredicate(Arrays.asList("Alice", "Bob")));
-        assertParseSuccess(parser, "Alice Bob", expectedFindCommand);
+                new FindCommand(new NameContainsKeywordsPredicate(List.of("Alice")));
+        assertParseSuccess(parser, "n/Alice", expectedFindCommand);
 
-        // multiple whitespaces between keywords
-        assertParseSuccess(parser, " \n Alice \n \t Bob  \t", expectedFindCommand);
+        // with leading whitespace
+        assertParseSuccess(parser, " n/Alice", expectedFindCommand);
+    }
+
+    @Test
+    public void parse_validNameArgsMultiWord_returnsFindCommand() {
+        FindCommand expectedFindCommand =
+                new FindCommand(new NameContainsKeywordsPredicate(List.of("Alice Bob")));
+        assertParseSuccess(parser, "n/Alice Bob", expectedFindCommand);
+    }
+
+    @Test
+    public void parse_emptyNamePrefix_throwsParseException() {
+        assertParseFailure(parser, "n/", String.format(MESSAGE_INVALID_COMMAND_FORMAT, FindCommand.MESSAGE_USAGE));
     }
 
     @Test
@@ -62,10 +74,9 @@ public class FindCommandParserTest {
 
     @Test
     public void parse_nameAndGameCombined_returnsFindCommand() {
-        // Combined name + game returns a non-null FindCommand without throwing
         FindCommand result = null;
         try {
-            result = parser.parse("Alice g/Valorant");
+            result = parser.parse("n/Alice g/Valorant");
         } catch (Exception e) {
             org.junit.jupiter.api.Assertions.fail("Parsing combined name and game should not throw: " + e.getMessage());
         }
@@ -76,7 +87,7 @@ public class FindCommandParserTest {
     public void parse_nameAndAliasCombined_returnsFindCommand() {
         FindCommand result = null;
         try {
-            result = parser.parse("Alice al/BenJumpin");
+            result = parser.parse("n/Alice al/BenJumpin");
         } catch (Exception e) {
             org.junit.jupiter.api.Assertions.fail("Should not throw: " + e.getMessage());
         }
@@ -98,7 +109,7 @@ public class FindCommandParserTest {
     public void parse_allThreeCombined_returnsFindCommand() {
         FindCommand result = null;
         try {
-            result = parser.parse("Alice g/Valorant al/BenJumpin");
+            result = parser.parse("n/Alice g/Valorant al/BenJumpin");
         } catch (Exception e) {
             org.junit.jupiter.api.Assertions.fail("Parsing all three constraints should not throw: " + e.getMessage());
         }
@@ -107,13 +118,13 @@ public class FindCommandParserTest {
 
     @Test
     public void parse_emptyGameInCombined_throwsParseException() {
-        assertParseFailure(parser, "Alice g/",
+        assertParseFailure(parser, "n/Alice g/",
                 String.format(MESSAGE_INVALID_COMMAND_FORMAT, FindCommand.MESSAGE_USAGE));
     }
 
     @Test
     public void parse_emptyAliasInCombined_throwsParseException() {
-        assertParseFailure(parser, "Alice al/",
+        assertParseFailure(parser, "n/Alice al/",
                 String.format(MESSAGE_INVALID_COMMAND_FORMAT, FindCommand.MESSAGE_USAGE));
     }
 }
