@@ -626,20 +626,20 @@ Furthermore, certain edits can cause Harmony to behave in unexpected ways (e.g.,
 
 ## Command summary
 
-| Action             | Format, Examples                                                                                                                                                       |
-|--------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **List**           | `list`                                                                                                                                                                 |
-| **Help**           | `help`                                                                                                                                                                 |
-| **Undo**           | `undo`                                                                                                                                                                 |
-| **Contact Add**    | `contact add n/NAME [g/GAME [al/ALIAS]…​]…​` <br> e.g., `contact add n/James Ho t/friend t/colleague`                                                                  |
-| **Contact Delete** | `contact delete INDEX` or `contact delete n/NAME`<br> e.g., `contact delete 1` or `contact delete n/James Ho`                                                          |
-| **Contact Edit**   | `contact edit INDEX e/NEW_NAME` or `contact edit n/NAME e/NEW_NAME`<br> e.g., `contact edit 1 e/James Lee` or `contact edit n/James Ho e/James Lee`                    |
-| **Contact View**   | `contact view INDEX`, `contact view n/NAME`, or `contact view me`<br> e.g., `contact view me` or `contact view 1` or `contact view n/Jamie Ho`                         |
-| **Clear**          | `clear`                                                                                                                                                                |
-| **Alias Add**      | `alias add INDEX g/GAME_NAME al/ALIAS` or `alias add n/CONTACT_NAME g/GAME_NAME al/ALIAS`<br> e.g., `alias add 1 g/Valorant al/Benjumpin`                              |
-| **Alias Delete**   | `alias delete INDEX g/GAME_NAME al/ALIAS` or `alias delete n/CONTACT_NAME g/GAME_NAME al/ALIAS`<br> e.g., `alias delete 1 g/Valorant al/Benjumpin`                     |
-| **Game Add**       | `game add INDEX g/GAME_NAME` or `game add n/CONTACT_NAME g/GAME_NAME`<br> e.g., `game add 1 g/Minecraft`                                                               |
-| **Game Delete**    | `game delete INDEX g/GAME_NAME` or `game delete n/CONTACT_NAME g/GAME_NAME`<br> e.g., `game delete 1 g/Minecraft`                                                      |
-| **Game List**      | `game list INDEX` or `game list n/CONTACT_NAME`<br> e.g., `game list 1`                                                                                                |
-| **Find**           | `find [n/NAME] [g/GAME_NAME] [al/ALIAS]`<br> e.g., `find n/Alice`, `find g/Valorant`, `find n/Alice g/Valorant al/Ace`                                                 |
-| **Theme**          | `theme THEME_NAME`<br> e.g., `theme light`                                                                                                                             |
+| Action             | Format, Examples                                                                                                                                              |
+|--------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **List**           | `list`                                                                                                                                                        |
+| **Help**           | `help`                                                                                                                                                        |
+| **Undo**           | `undo`                                                                                                                                                        |
+| **Contact Add**    | `contact add n/NAME [g/GAME [al/ALIAS]…​]…​` <br> e.g., `contact add n/James Ho t/friend t/colleague`                                                         |
+| **Contact Delete** | `contact delete INDEX` or `contact delete n/NAME` or `contact delete me` <br> e.g., `contact delete 1` or `contact delete n/James Ho` or `contact delete me`  |
+| **Contact Edit**   | `contact edit INDEX e/NEW_NAME` or `contact edit n/NAME e/NEW_NAME`<br> e.g., `contact edit 1 e/James Lee` or `contact edit n/James Ho e/James Lee`           |
+| **Contact View**   | `contact view INDEX`, `contact view n/NAME`, or `contact view me`<br> e.g., `contact view me` or `contact view 1` or `contact view n/Jamie Ho`                |
+| **Clear**          | `clear`                                                                                                                                                       |
+| **Alias Add**      | `alias add INDEX g/GAME_NAME al/ALIAS` or `alias add n/CONTACT_NAME g/GAME_NAME al/ALIAS`<br> e.g., `alias add 1 g/Valorant al/Benjumpin`                     |
+| **Alias Delete**   | `alias delete INDEX g/GAME_NAME al/ALIAS` or `alias delete n/CONTACT_NAME g/GAME_NAME al/ALIAS`<br> e.g., `alias delete 1 g/Valorant al/Benjumpin`            |
+| **Game Add**       | `game add INDEX g/GAME_NAME` or `game add n/CONTACT_NAME g/GAME_NAME`<br> e.g., `game add 1 g/Minecraft`                                                      |
+| **Game Delete**    | `game delete INDEX g/GAME_NAME` or `game delete n/CONTACT_NAME g/GAME_NAME`<br> e.g., `game delete 1 g/Minecraft`                                             |
+| **Game List**      | `game list INDEX` or `game list n/CONTACT_NAME`<br> e.g., `game list 1`                                                                                       |
+| **Find**           | `find [n/NAME] [g/GAME_NAME] [al/ALIAS]`<br> e.g., `find n/Alice`, `find g/Valorant`, `find n/Alice g/Valorant al/Ace`                                        |
+| **Theme**          | `theme THEME_NAME`<br> e.g., `theme light`                                                                                                                    |
