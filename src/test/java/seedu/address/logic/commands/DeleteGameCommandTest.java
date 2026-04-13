@@ -129,16 +129,6 @@ public class DeleteGameCommandTest {
     }
 
     @Test
-    public void execute_noProfile_failure() {
-        Model emptyModel = new ModelManager(new AddressBook(), new UserPrefs());
-        Game gameToDelete = new Game("Valorant");
-        DeleteGameCommand deleteGameCommand = new DeleteGameCommand(null, null, gameToDelete, true);
-        emptyModel.deletePerson(emptyModel.getFilteredPersonList().get(0));
-
-        assertCommandFailure(deleteGameCommand, emptyModel, "No user profile found.");
-    }
-
-    @Test
     public void execute_caseInsensitiveName_returnsConfirmation() throws Exception {
         Person firstPerson = model.getFilteredPersonList().get(0);
         Game gameToProcess = new Game("Minecraft");

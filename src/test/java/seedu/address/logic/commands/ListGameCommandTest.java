@@ -111,15 +111,6 @@ public class ListGameCommandTest {
     }
 
     @Test
-    public void execute_noProfile_failure() {
-        Model emptyModel = new ModelManager(new AddressBook(), new UserPrefs());
-        ListGameCommand listGameCommand = new ListGameCommand(null, null, true);
-        emptyModel.deletePerson(emptyModel.getFilteredPersonList().get(0));
-
-        assertCommandFailure(listGameCommand, emptyModel, "No user profile found.");
-    }
-
-    @Test
     public void execute_nullIndexAndName_failure() {
         ListGameCommand listGameCommand = new ListGameCommand(null, null, false);
         assertCommandFailure(listGameCommand, model, ListGameCommand.MESSAGE_CONTACT_NOT_FOUND);

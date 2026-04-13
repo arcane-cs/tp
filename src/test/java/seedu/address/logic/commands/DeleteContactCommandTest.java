@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandFailure;
 import static seedu.address.logic.commands.CommandTestUtil.showPersonAtIndex;
+import static seedu.address.model.util.GeneratePlaceholder.PLACEHOLDER_PROFILE;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_PERSON;
 import static seedu.address.testutil.TypicalIndexes.INDEX_SECOND_PERSON;
 import static seedu.address.testutil.TypicalPersons.ALICE;
@@ -161,15 +162,6 @@ public class DeleteContactCommandTest {
     }
 
     @Test
-    public void execute_noUserProfile_throwsCommandException() {
-        Model emptyModel = new ModelManager(new AddressBook(), new UserPrefs());
-        DeleteContactCommand deleteCommand = new DeleteContactCommand(null, null, true);
-        emptyModel.deletePerson(emptyModel.getFilteredPersonList().get(0));
-
-        assertCommandFailure(deleteCommand, emptyModel, "No user profile found.");
-    }
-
-    @Test
     public void execute_nullIndexAndName_throwsCommandException() {
         DeleteContactCommand deleteCommand = new DeleteContactCommand(null, null, false);
         assertCommandFailure(deleteCommand, model, DeleteContactCommand.MESSAGE_PERSON_NOT_FOUND);
@@ -237,6 +229,69 @@ public class DeleteContactCommandTest {
         deleteCommand.undo(model);
 
         assertTrue(model.getFilteredPersonList().contains(personToDelete));
+    }
+
+    @Test
+    public void performDeletion_deleteUserProfile_success() throws Exception {
+        // Setup a custom model with a User Profile
+        Model customModel = new ModelManager(new AddressBook(), new UserPrefs());
+        Person userProfile = new Person(new Name("ALICE"), new java.util.HashSet<>(), true);
+        customModel.setPerson(PLACEHOLDER_PROFILE, userProfile);
+
+        // Create a command targeting the user profile (3rd boolean parameter = true)
+        DeleteContactCommand deleteCommand = new DeleteContactCommand(null, null, true);
+
+        // Execute the actual deletion
+        CommandResult result = deleteCommand.execute(customModel);
+
+        assertEquals("Are you sure you want to reset User Profile? (y/n)", result.getFeedbackToUser());
+
+        result = deleteCommand.performDeletion(customModel);
+
+        assertEquals("Your User Profile has been successfully reset to default.", result.getFeedbackToUser());
+
+        // Verify the original profile is no longer in the list (replaced by placeholder)
+        assertFalse(customModel.getFilteredPersonList().contains(userProfile));
+    }
+
+    @Test
+    public void undo_deleteUserProfile_restoresOriginalProfile() throws Exception {
+        // Setup a custom model with a User Profile
+        Model customModel = new ModelManager(new AddressBook(), new UserPrefs());
+        Person userProfile = new Person(new Name("ALICE"), new java.util.HashSet<>(), true);
+        customModel.setPerson(PLACEHOLDER_PROFILE, userProfile);
+        DeleteContactCommand deleteCommand = new DeleteContactCommand(null, null, true);
+
+        // Execute the command to trigger the deletion and self-healing
+        deleteCommand.execute(customModel);
+        deleteCommand.performDeletion(customModel);
+
+        // Verify the original profile is gone
+        assertFalse(customModel.getFilteredPersonList().contains(userProfile));
+
+        // Undo the deletion
+        deleteCommand.undo(customModel);
+
+        // Verify the original profile was cleanly restored over the placeholder without duplicate exceptions
+        assertTrue(customModel.getFilteredPersonList().contains(userProfile));
+        assertEquals(userProfile, customModel.getUserProfile().get());
+    }
+
+    @Test
+    public void equals_userProfile() {
+        DeleteContactCommand deleteProfile1 = new DeleteContactCommand(null, null, true);
+        DeleteContactCommand deleteProfile2 = new DeleteContactCommand(null, null, true);
+        DeleteContactCommand deleteAlice = new DeleteContactCommand(null, ALICE.getName(), false);
+
+        // same object -> returns true
+        assertTrue(deleteProfile1.equals(deleteProfile1));
+
+        // same values -> returns true
+        assertTrue(deleteProfile1.equals(deleteProfile2));
+
+        // different targeting -> returns false
+        assertFalse(deleteProfile1.equals(deleteAlice));
+        assertFalse(deleteProfile1.equals(null));
     }
 
     @Test

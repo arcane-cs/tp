@@ -2,6 +2,7 @@ package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
+import static seedu.address.model.util.GeneratePlaceholder.PLACEHOLDER_PROFILE;
 
 import java.util.List;
 
@@ -35,6 +36,9 @@ public class DeleteContactCommand extends Command implements ConfirmableDeleteCo
     public static final String MESSAGE_DELETE_CONFIRMATION =
             "%1$s\nAre you sure you want to delete %2$s? (y/n)";
     public static final String MESSAGE_DELETE_CANCELLED = "Deletion of %1$s cancelled.";
+    public static final String MESSAGE_DELETE_USERPROFILE = "Your User Profile has been successfully reset to default.";
+    public static final String MESSAGE_DELETE_USERPROFILE_CONFIRMATION =
+            "Are you sure you want to reset User Profile? (y/n)";
 
     private final Index targetIndex;
     private final Name targetName;
@@ -80,7 +84,8 @@ public class DeleteContactCommand extends Command implements ConfirmableDeleteCo
         this.personToDelete = personToDelete;
         String confirmationMessage = String.format(MESSAGE_DELETE_CONFIRMATION,
                 Messages.format(personToDelete), personToDelete.getName());
-        return new CommandResult(confirmationMessage, personToDelete);
+        return new CommandResult(useUserProfile ? MESSAGE_DELETE_USERPROFILE_CONFIRMATION : confirmationMessage,
+                personToDelete);
     }
 
     @Override
@@ -91,12 +96,17 @@ public class DeleteContactCommand extends Command implements ConfirmableDeleteCo
     @Override
     public CommandResult performDeletion(Model model) {
         model.deletePerson(personToDelete);
-        return new CommandResult(String.format(MESSAGE_DELETE_PERSON_SUCCESS, personToDelete.getName()));
+        return new CommandResult(useUserProfile ? MESSAGE_DELETE_USERPROFILE
+                : String.format(MESSAGE_DELETE_PERSON_SUCCESS, personToDelete.getName()));
     }
 
     @Override
     public void undo(Model model) {
-        model.addPerson(personToDelete);
+        if (useUserProfile) {
+            model.setPerson(PLACEHOLDER_PROFILE, personToDelete);
+        } else {
+            model.addPerson(personToDelete);
+        }
     }
 
     @Override

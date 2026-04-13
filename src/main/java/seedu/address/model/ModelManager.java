@@ -100,19 +100,15 @@ public class ModelManager implements Model {
     @Override
     public void deletePerson(Person target) {
         addressBook.removePerson(target);
+        if (target.isUserProfile()) {
+            addUserProfile();
+        }
     }
 
     @Override
     public void addPerson(Person person) {
         addressBook.addPerson(person);
         updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
-    }
-
-    @Override
-    public void addUserProfile() {
-        if (getUserProfile().isEmpty()) {
-            addressBook.addUserProfile();
-        }
     }
 
     @Override
@@ -129,6 +125,13 @@ public class ModelManager implements Model {
         return addressBook.getPersonList().stream()
                 .filter(Person::isUserProfile)
                 .findFirst();
+    }
+
+    @Override
+    public void addUserProfile() {
+        if (getUserProfile().isEmpty()) {
+            addressBook.addUserProfile();
+        }
     }
 
     //=========== Filtered Person List Accessors =============================================================
